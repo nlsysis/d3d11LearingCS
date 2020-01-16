@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="common">
+      <UniqueIdentifier>{10ba7705-8d88-4c07-8335-c357ef129af1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="reference">
+      <UniqueIdentifier>{4d37948a-f3af-4731-b551-15570b448d1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main">
+      <UniqueIdentifier>{dcff9901-423a-42cb-866f-5f836a532697}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="InitDirectx3D.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="common\D3DApp.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="common\d3dUtil.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="common\GameTimer.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="reference\d3dx11effect.cpp">
+      <Filter>reference</Filter>
+    </ClCompile>
+    <ClCompile Include="reference\MathHelper.cpp">
+      <Filter>reference</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="common\D3DApp.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="common\d3dUtil.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="common\GameTimer.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="reference\d3dx11effect.h">
+      <Filter>reference</Filter>
+    </ClInclude>
+    <ClInclude Include="reference\LightHelper.h">
+      <Filter>reference</Filter>
+    </ClInclude>
+    <ClInclude Include="reference\MathHelper.h">
+      <Filter>reference</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
