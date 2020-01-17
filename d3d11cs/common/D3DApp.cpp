@@ -1,6 +1,8 @@
 #include "d3dApp.h"
 #include <WindowsX.h>
 #include <sstream>
+#include <memory>
+#include <vector>
 
 namespace
 {
@@ -37,7 +39,8 @@ D3DApp::D3DApp(HINSTANCE hInstance)
 	mSwapChain(0),
 	mDepthStencilBuffer(0),
 	mRenderTargetView(0),
-	mDepthStencilView(0)
+	mDepthStencilView(0),
+	m_rasterState(0)
 {
 	ZeroMemory(&mScreenViewport, sizeof(D3D11_VIEWPORT));
 	gd3dApp = this;
@@ -345,6 +348,18 @@ bool D3DApp::InitDirect3D()
 	createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 
+	IDXGIFactory* pFactory;
+	IDXGIAdapter* pAdapter;             //for see about the equipment ability
+	IDXGIOutput* adapterOutput;
+	std::vector <IDXGIAdapter*> vAdapters;
+	HR(CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&pFactory));
+	for (UINT i = 0;
+		pFactory->EnumAdapters(i, &pAdapter) != DXGI_ERROR_NOT_FOUND;
+		++i)
+	{
+		vAdapters.push_back(pAdapter);
+	}
+	
 	D3D_FEATURE_LEVEL featureLevel;
 	HRESULT hr = D3D11CreateDevice(
 		0,                 // default adapter
@@ -433,6 +448,22 @@ bool D3DApp::InitDirect3D()
 	// just call the OnResize method here to avoid code duplication.
 
 	OnResize();
+
+	//D3D11_RASTERIZER_DESC rasterDesc;
+	//rasterDesc.AntialiasedLineEnable = false;
+	//rasterDesc.CullMode = D3D11_CULL_BACK;
+	//rasterDesc.DepthBias = 0;
+	//rasterDesc.DepthBiasClamp = 0.0f;
+	//rasterDesc.DepthClipEnable = true;
+	//rasterDesc.FillMode = D3D11_FILL_SOLID;
+	//rasterDesc.FrontCounterClockwise = false;
+	//rasterDesc.MultisampleEnable = false;
+	//rasterDesc.ScissorEnable = false;
+	//rasterDesc.SlopeScaledDepthBias = 0.0f;
+
+	//// Create the rasterizer state from the description we just filled out.
+	//HR(md3dDevice->CreateRasterizerState(&rasterDesc, &m_rasterState));
+	//md3dDeviceContext->RSSetState(m_rasterState);
 
 	return true;
 }

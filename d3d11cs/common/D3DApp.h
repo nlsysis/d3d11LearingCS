@@ -6,7 +6,7 @@
 
 #pragma comment(lib,"d3d11.lib")
 #pragma comment(lib,"d3dx11d.lib")
-//#pragma comment(lib,"D3DCompiler.lib")
+#pragma comment(lib,"D3DCompiler.lib")
 class D3DApp
 {
 public:
@@ -56,7 +56,9 @@ protected:
 	ID3D11Texture2D* mDepthStencilBuffer;
 	ID3D11RenderTargetView* mRenderTargetView;
 	ID3D11DepthStencilView* mDepthStencilView;
+	ID3D11DepthStencilState* m_depthStencilState;
 	D3D11_VIEWPORT mScreenViewport;
+	ID3D11RasterizerState* m_rasterState;
 
 	//  下面的?量是在D3DApp?造函数中?置的。但是，?可以在派生?中重写?些?。
 

@@ -1,4 +1,5 @@
 #include "d3dApp.h"
+#include "BoxApp.h"
 
 class InitDirect3DApp : public D3DApp
 {
@@ -20,7 +21,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-	InitDirect3DApp theApp(hInstance);
+	//InitDirect3DApp theApp(hInstance);
+	BoxApp theApp(hInstance);
 
 	if (!theApp.Init())
 		return 0;
