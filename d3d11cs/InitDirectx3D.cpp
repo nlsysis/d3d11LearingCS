@@ -1,5 +1,6 @@
 #include "d3dApp.h"
 #include "BoxApp.h"
+#include "HillsApp.h"
 
 class InitDirect3DApp : public D3DApp
 {
@@ -22,7 +23,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 #endif
 
 	//InitDirect3DApp theApp(hInstance);
-	BoxApp theApp(hInstance);
+	HillsApp theApp(hInstance);
 
 	if (!theApp.Init())
 		return 0;

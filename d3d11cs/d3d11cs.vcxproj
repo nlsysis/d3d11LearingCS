@@ -139,6 +139,7 @@
     <ClCompile Include="common\d3dUtil.cpp" />
     <ClCompile Include="common\GameTimer.cpp" />
     <ClCompile Include="GeometryGenerator.cpp" />
+    <ClCompile Include="HillsApp.cpp" />
     <ClCompile Include="InitDirectx3D.cpp" />
     <ClCompile Include="reference\d3dx11effect.cpp" />
     <ClCompile Include="reference\MathHelper.cpp" />
@@ -149,6 +150,7 @@
     <ClInclude Include="common\d3dUtil.h" />
     <ClInclude Include="common\GameTimer.h" />
     <ClInclude Include="GeometryGenerator.h" />
+    <ClInclude Include="HillsApp.h" />
     <ClInclude Include="reference\d3dx11effect.h" />
     <ClInclude Include="reference\LightHelper.h" />
     <ClInclude Include="reference\MathHelper.h" />

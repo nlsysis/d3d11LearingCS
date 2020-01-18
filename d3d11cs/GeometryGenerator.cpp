@@ -526,7 +526,14 @@ void GeometryGenerator::BuildCylinderBottomCap(float bottomRadius, float topRadi
 		meshData.Indices.push_back(baseIndex + i + 1);
 	}
 }
-
+/**
+	*@brief create grid mesh
+	@parame[in] width  of the grid
+	@parame[in] depth(length in z)  of the grid 
+	@parame[in] m the vertex number in width
+	@parame[in] n the vertex number in depth
+	@parame[in/out] meshData
+*/
 void GeometryGenerator::CreateGrid(float width, float depth, UINT m, UINT n, MeshData& meshData)
 {
 	UINT vertexCount = m * n;
