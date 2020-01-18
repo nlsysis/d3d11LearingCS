@@ -42,6 +42,9 @@
     <ClCompile Include="HillsApp.cpp">
       <Filter>main</Filter>
     </ClCompile>
+    <ClCompile Include="ShapesApp.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common\D3DApp.h">
@@ -69,6 +72,9 @@
       <Filter>main</Filter>
     </ClInclude>
     <ClInclude Include="HillsApp.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="ShapesApp.h">
       <Filter>main</Filter>
     </ClInclude>
   </ItemGroup>

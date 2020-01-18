@@ -143,6 +143,7 @@
     <ClCompile Include="InitDirectx3D.cpp" />
     <ClCompile Include="reference\d3dx11effect.cpp" />
     <ClCompile Include="reference\MathHelper.cpp" />
+    <ClCompile Include="ShapesApp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BoxApp.h" />
@@ -154,6 +155,7 @@
     <ClInclude Include="reference\d3dx11effect.h" />
     <ClInclude Include="reference\LightHelper.h" />
     <ClInclude Include="reference\MathHelper.h" />
+    <ClInclude Include="ShapesApp.h" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="shader\color.hlsl">

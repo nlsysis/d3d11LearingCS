@@ -358,7 +358,15 @@ void GeometryGenerator::CreateGeosphere(float radius, UINT numSubdivisions, Mesh
 		XMStoreFloat3(&meshData.Vertices[i].TangentU, XMVector3Normalize(T));
 	}
 }
-
+/**
+	@brief create cylinder
+	@parama[in] bottomRadius  the bottom radius of  cylinder
+	@parama[in] topRadius the top radius of cylinder
+	@parama[in] height the height of cylinder
+	@parama[in] sliceCount the slice count of the top/bottom face
+	@parama[in] stackCount the face count of a cycle of cylinder
+	@parama[in/out] meshData the vertices and indices of cylinder
+*/
 void GeometryGenerator::CreateCylinder(float bottomRadius, float topRadius, float height, UINT sliceCount, UINT stackCount, MeshData& meshData)
 {
 	meshData.Vertices.clear();
