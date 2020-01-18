@@ -2,6 +2,7 @@
 #include "BoxApp.h"
 #include "HillsApp.h"
 #include "ShapesApp.h"
+#include "SkullApp.h"
 
 class InitDirect3DApp : public D3DApp
 {
@@ -24,7 +25,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 #endif
 
 	//InitDirect3DApp theApp(hInstance);
-	ShapesApp theApp(hInstance);
+	SkullApp theApp(hInstance);
 
 	if (!theApp.Init())
 		return 0;
