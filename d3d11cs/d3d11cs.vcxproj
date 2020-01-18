@@ -145,6 +145,8 @@
     <ClCompile Include="reference\MathHelper.cpp" />
     <ClCompile Include="ShapesApp.cpp" />
     <ClCompile Include="SkullApp.cpp" />
+    <ClCompile Include="Waves.cpp" />
+    <ClCompile Include="WavesApp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BoxApp.h" />
@@ -158,6 +160,8 @@
     <ClInclude Include="reference\MathHelper.h" />
     <ClInclude Include="ShapesApp.h" />
     <ClInclude Include="SkullApp.h" />
+    <ClInclude Include="Waves.h" />
+    <ClInclude Include="WavesApp.h" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="shader\color.hlsl">

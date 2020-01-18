@@ -13,6 +13,9 @@
     <Filter Include="shader">
       <UniqueIdentifier>{2b757ade-5d82-4a1f-820d-1fa159f57a65}</UniqueIdentifier>
     </Filter>
+    <Filter Include="main\wave">
+      <UniqueIdentifier>{f91ee219-cd01-4f73-9a65-87fd8eb3e0a0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="InitDirectx3D.cpp">
@@ -48,6 +51,12 @@
     <ClCompile Include="SkullApp.cpp">
       <Filter>main</Filter>
     </ClCompile>
+    <ClCompile Include="Waves.cpp">
+      <Filter>main\wave</Filter>
+    </ClCompile>
+    <ClCompile Include="WavesApp.cpp">
+      <Filter>main\wave</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common\D3DApp.h">
@@ -82,6 +91,12 @@
     </ClInclude>
     <ClInclude Include="SkullApp.h">
       <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="Waves.h">
+      <Filter>main\wave</Filter>
+    </ClInclude>
+    <ClInclude Include="WavesApp.h">
+      <Filter>main\wave</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
