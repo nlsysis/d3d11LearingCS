@@ -4,6 +4,7 @@
 #include "ShapesApp.h"
 #include "SkullApp.h"
 #include "WavesApp.h"
+#include "LightingApp.h"
 
 class InitDirect3DApp : public D3DApp
 {
@@ -26,7 +27,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 #endif
 
 	//InitDirect3DApp theApp(hInstance);
-	WavesApp theApp(hInstance);
+	LightingApp theApp(hInstance);
 
 	if (!theApp.Init())
 		return 0;

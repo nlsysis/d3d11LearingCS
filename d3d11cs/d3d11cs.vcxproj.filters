@@ -57,6 +57,9 @@
     <ClCompile Include="WavesApp.cpp">
       <Filter>main\wave</Filter>
     </ClCompile>
+    <ClCompile Include="LightingApp.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common\D3DApp.h">
@@ -98,10 +101,24 @@
     <ClInclude Include="WavesApp.h">
       <Filter>main\wave</Filter>
     </ClInclude>
+    <ClInclude Include="LightingApp.h">
+      <Filter>main</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="shader\color.hlsl">
       <Filter>shader</Filter>
     </CustomBuild>
+    <CustomBuild Include="LightHelper.hlsl">
+      <Filter>shader</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="LightPS.hlsl">
+      <Filter>shader</Filter>
+    </FxCompile>
+    <FxCompile Include="Light.hlsl">
+      <Filter>shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
