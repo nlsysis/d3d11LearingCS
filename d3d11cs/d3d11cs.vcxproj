@@ -142,6 +142,7 @@
     <ClCompile Include="HillsApp.cpp" />
     <ClCompile Include="InitDirectx3D.cpp" />
     <ClCompile Include="LightingApp.cpp" />
+    <ClCompile Include="LitSkullApp.cpp" />
     <ClCompile Include="reference\d3dx11effect.cpp" />
     <ClCompile Include="reference\MathHelper.cpp" />
     <ClCompile Include="ShapesApp.cpp" />
@@ -157,6 +158,7 @@
     <ClInclude Include="GeometryGenerator.h" />
     <ClInclude Include="HillsApp.h" />
     <ClInclude Include="LightingApp.h" />
+    <ClInclude Include="LitSkullApp.h" />
     <ClInclude Include="reference\d3dx11effect.h" />
     <ClInclude Include="reference\LightHelper.h" />
     <ClInclude Include="reference\MathHelper.h" />
@@ -183,7 +185,9 @@
     <CustomBuild Include="shader\LightHelper.hlsl">
       <FileType>Document</FileType>
     </CustomBuild>
-    <CustomBuild Include="shader\LightPS.hlsl">
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="shader\LitSkull.hlsl">
       <FileType>Document</FileType>
     </CustomBuild>
   </ItemGroup>

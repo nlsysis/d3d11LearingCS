@@ -60,6 +60,9 @@
     <ClCompile Include="LightingApp.cpp">
       <Filter>main</Filter>
     </ClCompile>
+    <ClCompile Include="LitSkullApp.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common\D3DApp.h">
@@ -104,20 +107,23 @@
     <ClInclude Include="LightingApp.h">
       <Filter>main</Filter>
     </ClInclude>
+    <ClInclude Include="LitSkullApp.h">
+      <Filter>main</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="shader\color.hlsl">
       <Filter>shader</Filter>
     </CustomBuild>
+    <CustomBuild Include="shader\Light.hlsl">
+      <Filter>shader</Filter>
+    </CustomBuild>
+    <CustomBuild Include="shader\LightHelper.hlsl">
+      <Filter>shader</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="shader\Light.hlsl">
-      <Filter>shader</Filter>
-    </FxCompile>
-    <FxCompile Include="shader\LightHelper.hlsl">
-      <Filter>shader</Filter>
-    </FxCompile>
-    <FxCompile Include="shader\LightPS.hlsl">
+    <FxCompile Include="shader\LitSkull.hlsl">
       <Filter>shader</Filter>
     </FxCompile>
   </ItemGroup>
