@@ -19,6 +19,9 @@
     <Filter Include="main\texture">
       <UniqueIdentifier>{36e75775-205e-4452-8405-ac9958e28024}</UniqueIdentifier>
     </Filter>
+    <Filter Include="main\Blending">
+      <UniqueIdentifier>{3423d10e-872f-40bd-8576-537796e2cf97}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="InitDirectx3D.cpp">
@@ -71,6 +74,12 @@
     </ClCompile>
     <ClCompile Include="TexturedHillsAndWavesApp.cpp">
       <Filter>main\texture</Filter>
+    </ClCompile>
+    <ClCompile Include="BlendApp.cpp">
+      <Filter>main\Blending</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderStates.cpp">
+      <Filter>main\Blending</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -125,6 +134,12 @@
     <ClInclude Include="TexturedHillsAndWavesApp.h">
       <Filter>main\texture</Filter>
     </ClInclude>
+    <ClInclude Include="BlendApp.h">
+      <Filter>main\Blending</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderStates.h">
+      <Filter>main\Blending</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="shader\color.hlsl">
@@ -136,13 +151,11 @@
     <CustomBuild Include="shader\LightHelper.hlsl">
       <Filter>shader</Filter>
     </CustomBuild>
-    <CustomBuild Include="shader\TexturedHillsAndWave.hlsl">
+    <CustomBuild Include="shader\Blending.hlsl">
       <Filter>shader</Filter>
     </CustomBuild>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="shader\LitSkull.hlsl">
+    <CustomBuild Include="shader\LitSkull.hlsl">
       <Filter>shader</Filter>
-    </FxCompile>
+    </CustomBuild>
   </ItemGroup>
 </Project>
