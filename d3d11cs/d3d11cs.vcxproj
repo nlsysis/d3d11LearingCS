@@ -138,6 +138,7 @@
     <ClCompile Include="common\D3DApp.cpp" />
     <ClCompile Include="common\d3dUtil.cpp" />
     <ClCompile Include="common\GameTimer.cpp" />
+    <ClCompile Include="CreateApp.cpp" />
     <ClCompile Include="GeometryGenerator.cpp" />
     <ClCompile Include="HillsApp.cpp" />
     <ClCompile Include="InitDirectx3D.cpp" />
@@ -155,6 +156,7 @@
     <ClInclude Include="common\D3DApp.h" />
     <ClInclude Include="common\d3dUtil.h" />
     <ClInclude Include="common\GameTimer.h" />
+    <ClInclude Include="CreateApp.h" />
     <ClInclude Include="GeometryGenerator.h" />
     <ClInclude Include="HillsApp.h" />
     <ClInclude Include="LightingApp.h" />

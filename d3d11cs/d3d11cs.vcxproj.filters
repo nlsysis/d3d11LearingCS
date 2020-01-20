@@ -16,6 +16,9 @@
     <Filter Include="main\wave">
       <UniqueIdentifier>{f91ee219-cd01-4f73-9a65-87fd8eb3e0a0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="main\texture">
+      <UniqueIdentifier>{36e75775-205e-4452-8405-ac9958e28024}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="InitDirectx3D.cpp">
@@ -63,6 +66,9 @@
     <ClCompile Include="LitSkullApp.cpp">
       <Filter>main</Filter>
     </ClCompile>
+    <ClCompile Include="CreateApp.cpp">
+      <Filter>main\texture</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common\D3DApp.h">
@@ -109,6 +115,9 @@
     </ClInclude>
     <ClInclude Include="LitSkullApp.h">
       <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="CreateApp.h">
+      <Filter>main\texture</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
