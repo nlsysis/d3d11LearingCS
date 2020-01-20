@@ -7,6 +7,7 @@
 #include "LightingApp.h"
 #include "LitSkullApp.h"
 #include "CreateApp.h"
+#include "TexturedHillsAndWavesApp.h"
 
 class InitDirect3DApp : public D3DApp
 {
@@ -29,7 +30,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 #endif
 
 	//InitDirect3DApp theApp(hInstance);
-	CreateApp theApp(hInstance);
+	TexturedHillsAndWavesApp theApp(hInstance);
 
 	if (!theApp.Init())
 		return 0;

@@ -69,6 +69,9 @@
     <ClCompile Include="CreateApp.cpp">
       <Filter>main\texture</Filter>
     </ClCompile>
+    <ClCompile Include="TexturedHillsAndWavesApp.cpp">
+      <Filter>main\texture</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common\D3DApp.h">
@@ -119,6 +122,9 @@
     <ClInclude Include="CreateApp.h">
       <Filter>main\texture</Filter>
     </ClInclude>
+    <ClInclude Include="TexturedHillsAndWavesApp.h">
+      <Filter>main\texture</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="shader\color.hlsl">
@@ -128,6 +134,9 @@
       <Filter>shader</Filter>
     </CustomBuild>
     <CustomBuild Include="shader\LightHelper.hlsl">
+      <Filter>shader</Filter>
+    </CustomBuild>
+    <CustomBuild Include="shader\TexturedHillsAndWave.hlsl">
       <Filter>shader</Filter>
     </CustomBuild>
   </ItemGroup>

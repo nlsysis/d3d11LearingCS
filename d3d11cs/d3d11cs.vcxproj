@@ -148,6 +148,7 @@
     <ClCompile Include="reference\MathHelper.cpp" />
     <ClCompile Include="ShapesApp.cpp" />
     <ClCompile Include="SkullApp.cpp" />
+    <ClCompile Include="TexturedHillsAndWavesApp.cpp" />
     <ClCompile Include="Waves.cpp" />
     <ClCompile Include="WavesApp.cpp" />
   </ItemGroup>
@@ -166,6 +167,7 @@
     <ClInclude Include="reference\MathHelper.h" />
     <ClInclude Include="ShapesApp.h" />
     <ClInclude Include="SkullApp.h" />
+    <ClInclude Include="TexturedHillsAndWavesApp.h" />
     <ClInclude Include="Waves.h" />
     <ClInclude Include="WavesApp.h" />
   </ItemGroup>
@@ -190,6 +192,11 @@
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="shader\LitSkull.hlsl">
+      <FileType>Document</FileType>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="shader\TexturedHillsAndWave.hlsl">
       <FileType>Document</FileType>
     </CustomBuild>
   </ItemGroup>
