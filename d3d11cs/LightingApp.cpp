@@ -46,6 +46,11 @@ LightingApp::LightingApp(HINSTANCE hInstance)
 	mWavesMat.Ambient = XMFLOAT4(0.137f, 0.42f, 0.556f, 1.0f);
 	mWavesMat.Diffuse = XMFLOAT4(0.137f, 0.42f, 0.556f, 1.0f);
 	mWavesMat.Specular = XMFLOAT4(0.8f, 0.8f, 0.8f, 96.0f);
+
+	mLight.dirLight = mDirLight;
+	mLight.pointLight = mPointLight;
+	mLight.spotLight = mSpotLight;
+	mLight.eyePos = XMFLOAT3(0.0f, 0.0f, 0.0f);
 }
 
 LightingApp::~LightingApp()
@@ -71,6 +76,8 @@ bool LightingApp::Init()
 	BuildFX();
 	BuildConstantBuffer();
 
+	
+	
 	return true;
 }
 
@@ -164,7 +171,7 @@ void LightingApp::DrawScene()
 
 
 	// Set per frame constants.
-	SetLightParameters();
+	//SetLightParameters();
 
 	//
 	// Draw the hills.
@@ -436,57 +443,57 @@ void LightingApp::BuildConstantBuffer()
 	lightBufferDesc.StructureByteStride = 0;
 	HR(md3dDevice->CreateBuffer(&lightBufferDesc, NULL, &mLightBuffer));
 
-	{
-		D3D11_BUFFER_DESC materialBufferDesc;
-		materialBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-		materialBufferDesc.ByteWidth = sizeof(Material) * 1;
-		materialBufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;                //structed buffer bind type
-		materialBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		materialBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;     //enables a resource as a structured buffer
-		materialBufferDesc.StructureByteStride = sizeof(Material);
-		HR(md3dDevice->CreateBuffer(&materialBufferDesc, NULL, &mMaterialBuffer));
+	//{
+	//	D3D11_BUFFER_DESC materialBufferDesc;
+	//	materialBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	//	materialBufferDesc.ByteWidth = sizeof(Material) * 1;
+	//	materialBufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;                //structed buffer bind type
+	//	materialBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	//	materialBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;     //enables a resource as a structured buffer it must be setted
+	//	materialBufferDesc.StructureByteStride = sizeof(Material);               // must be setted
+	//	HR(md3dDevice->CreateBuffer(&materialBufferDesc, NULL, &mMaterialBuffer));
 
-	}
-	//bufferrs for light
-	{
-		D3D11_BUFFER_DESC dirLightBufferDesc, pointLightBufferDesc, spotLightBufferDesc;
+	//}
+	////bufferrs for light
+	//{
+	//	D3D11_BUFFER_DESC dirLightBufferDesc, pointLightBufferDesc, spotLightBufferDesc;
 
-		dirLightBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-		dirLightBufferDesc.ByteWidth = sizeof(DirectionalLight) * 1;
-		dirLightBufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;                //structed buffer bind type
-		dirLightBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		dirLightBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;     //enables a resource as a structured buffer
-		dirLightBufferDesc.StructureByteStride = sizeof(DirectionalLight);
-		HR(md3dDevice->CreateBuffer(&dirLightBufferDesc, NULL, &mDirLightBuffer));
-		
+	//	dirLightBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	//	dirLightBufferDesc.ByteWidth = sizeof(DirectionalLight) * 1;
+	//	dirLightBufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;                //structed buffer bind type
+	//	dirLightBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	//	dirLightBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;     //enables a resource as a structured buffer
+	//	dirLightBufferDesc.StructureByteStride = sizeof(DirectionalLight);
+	//	HR(md3dDevice->CreateBuffer(&dirLightBufferDesc, NULL, &mDirLightBuffer));
+	//	
 
-		pointLightBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-		pointLightBufferDesc.ByteWidth = sizeof(PointLight) * 1;
-		pointLightBufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-		pointLightBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		pointLightBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
-		pointLightBufferDesc.StructureByteStride = sizeof(PointLight);
-		HR(md3dDevice->CreateBuffer(&pointLightBufferDesc, NULL, &mPointLightBuffer));
+	//	pointLightBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	//	pointLightBufferDesc.ByteWidth = sizeof(PointLight) * 1;
+	//	pointLightBufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	//	pointLightBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	//	pointLightBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+	//	pointLightBufferDesc.StructureByteStride = sizeof(PointLight);
+	//	HR(md3dDevice->CreateBuffer(&pointLightBufferDesc, NULL, &mPointLightBuffer));
 
-		spotLightBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-		spotLightBufferDesc.ByteWidth = sizeof(SpotLight) * 1;
-		spotLightBufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-		spotLightBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		spotLightBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
-		spotLightBufferDesc.StructureByteStride = sizeof(SpotLight);
-		HR(md3dDevice->CreateBuffer(&spotLightBufferDesc, NULL, &mSpotLightBuffer));
+	//	spotLightBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	//	spotLightBufferDesc.ByteWidth = sizeof(SpotLight) * 1;
+	//	spotLightBufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	//	spotLightBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	//	spotLightBufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+	//	spotLightBufferDesc.StructureByteStride = sizeof(SpotLight);
+	//	HR(md3dDevice->CreateBuffer(&spotLightBufferDesc, NULL, &mSpotLightBuffer));
 
-		D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
-		ZeroMemory(&shaderResourceViewDesc, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
-		shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
-		shaderResourceViewDesc.Format = DXGI_FORMAT_UNKNOWN;
-		shaderResourceViewDesc.Buffer.FirstElement = 0;
-		shaderResourceViewDesc.Buffer.NumElements = 1;
-		HR(md3dDevice->CreateShaderResourceView(mDirLightBuffer, &shaderResourceViewDesc, &DirLightResourceView));
-		HR(md3dDevice->CreateShaderResourceView(mPointLightBuffer, &shaderResourceViewDesc, &PointLightResourceView));
-		HR(md3dDevice->CreateShaderResourceView(mSpotLightBuffer, &shaderResourceViewDesc, &SpotLightBufferResourceView));
-		HR(md3dDevice->CreateShaderResourceView(mMaterialBuffer, &shaderResourceViewDesc, &MaterialResourceView));
-	}
+	//	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
+	//	ZeroMemory(&shaderResourceViewDesc, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
+	//	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;      //it is SRV for structured buffer
+	//	shaderResourceViewDesc.Format = DXGI_FORMAT_UNKNOWN;      //it is SRV for structured buffer
+	//	shaderResourceViewDesc.Buffer.FirstElement = 0;
+	//	shaderResourceViewDesc.Buffer.NumElements = 1;           //the nums of buffer
+	//	HR(md3dDevice->CreateShaderResourceView(mDirLightBuffer, &shaderResourceViewDesc, &DirLightResourceView));
+	//	HR(md3dDevice->CreateShaderResourceView(mPointLightBuffer, &shaderResourceViewDesc, &PointLightResourceView));
+	//	HR(md3dDevice->CreateShaderResourceView(mSpotLightBuffer, &shaderResourceViewDesc, &SpotLightBufferResourceView));
+	//	HR(md3dDevice->CreateShaderResourceView(mMaterialBuffer, &shaderResourceViewDesc, &MaterialResourceView));
+	//}
 }
 
 void LightingApp::SetShaderParameters(const XMFLOAT4X4 worldMatrix,const Material material)
@@ -511,10 +518,15 @@ void LightingApp::SetShaderParameters(const XMFLOAT4X4 worldMatrix,const Materia
 
 	md3dDeviceContext->VSSetConstantBuffers(0, 1, &mMatrixBuffer);
 	
-	HR(md3dDeviceContext->Map(mMaterialBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource));
-	memcpy(mappedResource.pData, &material, sizeof(material));
-	md3dDeviceContext->Unmap(mMaterialBuffer, 0);
-	md3dDeviceContext->PSSetShaderResources(3,1,&MaterialResourceView);
+	mLight.material = material;
+	HR(md3dDeviceContext->Map(mLightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource));
+	memcpy(mappedResource.pData, &mLight, sizeof(LightType));
+	md3dDeviceContext->Unmap(mLightBuffer, 0);
+	md3dDeviceContext->PSSetConstantBuffers(1, 1, &mLightBuffer);
+	//HR(md3dDeviceContext->Map(mMaterialBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource));
+	//memcpy(mappedResource.pData, &material, sizeof(material));
+	//md3dDeviceContext->Unmap(mMaterialBuffer, 0);
+	//md3dDeviceContext->PSSetShaderResources(3,1,&MaterialResourceView);
 }
 
 void LightingApp::SetLightParameters()
@@ -523,28 +535,28 @@ void LightingApp::SetLightParameters()
 	LightType* dataPtr;
 	HR(md3dDeviceContext->Map(mLightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource));
 
-	dataPtr = (LightType*)mappedResource.pData;
+//	dataPtr = (LightType*)mappedResource.pData;
 
-	dataPtr->eyePos = mLight.eyePos;
-	dataPtr->padding = 0.0f;
+//	dataPtr->eyePos = mLight.eyePos;
+//	dataPtr->padding = 0.0f;
 	md3dDeviceContext->Unmap(mLightBuffer, 0);
 
 	md3dDeviceContext->PSSetConstantBuffers(0, 1, &mLightBuffer);
 
-	HR(md3dDeviceContext->Map(mDirLightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource));
-	memcpy(mappedResource.pData, &mDirLight, sizeof(mDirLight));
-	md3dDeviceContext->Unmap(mDirLightBuffer, 0);
+	//HR(md3dDeviceContext->Map(mDirLightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource));
+	//memcpy(mappedResource.pData, &mDirLight, sizeof(mDirLight));
+	//md3dDeviceContext->Unmap(mDirLightBuffer, 0);
 
-	HR(md3dDeviceContext->Map(mPointLightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource));
-	memcpy(mappedResource.pData, &mPointLight, sizeof(mPointLight));
-	md3dDeviceContext->Unmap(mPointLightBuffer, 0);
+	//HR(md3dDeviceContext->Map(mPointLightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource));
+	//memcpy(mappedResource.pData, &mPointLight, sizeof(mPointLight));
+	//md3dDeviceContext->Unmap(mPointLightBuffer, 0);
 
-	HR(md3dDeviceContext->Map(mSpotLightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource));
-	memcpy(mappedResource.pData, &mSpotLight, sizeof(mSpotLight));
-	md3dDeviceContext->Unmap(mSpotLightBuffer, 0);
+	//HR(md3dDeviceContext->Map(mSpotLightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource));
+	//memcpy(mappedResource.pData, &mSpotLight, sizeof(mSpotLight));
+	//md3dDeviceContext->Unmap(mSpotLightBuffer, 0);
 
-	md3dDeviceContext->PSSetShaderResources(0, 1,&DirLightResourceView);
-	md3dDeviceContext->PSSetShaderResources(1, 1, &PointLightResourceView);
-	md3dDeviceContext->PSSetShaderResources(2, 1, &SpotLightBufferResourceView);
+	//md3dDeviceContext->PSSetShaderResources(0, 1,&DirLightResourceView);
+	//md3dDeviceContext->PSSetShaderResources(1, 1, &PointLightResourceView);
+	//md3dDeviceContext->PSSetShaderResources(2, 1, &SpotLightBufferResourceView);
 
 }

@@ -30,8 +30,7 @@ VertexOut VS(VertexIn vin)
     vout.NormalW = mul(vin.NormalL, (float3x3) gWorldInvTranspose); //the space change of normal is not like vertex
 		
 	// Transform to homogeneous clip space.
-    matrix mvp = transpose(gWorldViewProj);
-    vout.PosH = mul(float4(vin.PosL, 1.0f), mvp);
+    vout.PosH = mul(float4(vin.PosL, 1.0f), gWorldViewProj);
 	
     return vout;
 }

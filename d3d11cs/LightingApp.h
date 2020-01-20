@@ -21,6 +21,10 @@ private:
 	};
 	struct LightType
 	{
+		DirectionalLight dirLight;
+		PointLight pointLight;
+		SpotLight spotLight;
+		Material material;
 		XMFLOAT3 eyePos;
 		float padding;
 	};
