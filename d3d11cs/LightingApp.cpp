@@ -50,7 +50,8 @@ LightingApp::LightingApp(HINSTANCE hInstance)
 	mLight.dirLight = mDirLight;
 	mLight.pointLight = mPointLight;
 	mLight.spotLight = mSpotLight;
-	mLight.eyePos = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	mLight.eyePos = XMFLOAT3(0.0f, 0.0f, -5.0f);
+	mLight.padding = 0.0f;
 }
 
 LightingApp::~LightingApp()
@@ -96,7 +97,7 @@ void LightingApp::UpdateScene(float dt)
 	float z = mRadius * sinf(mPhi)*sinf(mTheta);
 	float y = mRadius * cosf(mPhi);
 
-	mLight.eyePos = XMFLOAT3(x, y, z);
+	//mLight.eyePos = XMFLOAT3(x, y, z);
 
 	// Build the view matrix.
 	XMVECTOR pos = XMVectorSet(x, y, z, 1.0f);
