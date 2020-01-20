@@ -1,20 +1,24 @@
 #include "LightHelper.hlsl"
 
-cbuffer cbPerFrame
-{
-    DirectionalLight gDirLight;
-    PointLight gPointLight;
-    SpotLight gSpotLight;
-    float3 gEyePosW;
-};
 
-cbuffer cbPerObject
+cbuffer cbPerObject : register(b0)
 {
     float4x4 gWorld;
     float4x4 gWorldInvTranspose;
     float4x4 gWorldViewProj;
-    Material gMaterial;
 };
+
+cbuffer cbPerFrame : register(b1)
+{
+    float3 gEyePosW;
+    float padding;
+};
+
+
+StructuredBuffer<DirectionalLight> gDirLight : register(t0);
+StructuredBuffer<PointLight> gPointLight : register(t1);
+StructuredBuffer<SpotLight> gSpotLight : register(t2);
+StructuredBuffer<Material> gMaterial : register(t3);
 
 struct VertexIn
 {
@@ -38,7 +42,8 @@ VertexOut VS(VertexIn vin)
     vout.NormalW = mul(vin.NormalL, (float3x3) gWorldInvTranspose);   //the space change of normal is not like vertex
 		
 	// Transform to homogeneous clip space.
-    vout.PosH = mul(float4(vin.PosL, 1.0f), gWorldViewProj);
+    matrix mvp = transpose(gWorldViewProj);
+    vout.PosH = mul(float4(vin.PosL, 1.0f), mvp);
 	
     return vout;
 }
@@ -58,17 +63,17 @@ float4 PS(VertexOut pin) : SV_Target
 	// Sum the light contribution from each light source.
     float4 A, D, S;
 
-    ComputeDirectionalLight(gMaterial, gDirLight, pin.NormalW, toEyeW, A, D, S);
+    ComputeDirectionalLight(gMaterial[0], gDirLight[0], pin.NormalW, toEyeW, A, D, S);
     ambient += A;
     diffuse += D;
     spec += S;
 
-    ComputePointLight(gMaterial, gPointLight, pin.PosW, pin.NormalW, toEyeW, A, D, S);
+    ComputePointLight(gMaterial[0], gPointLight[0], pin.PosW, pin.NormalW, toEyeW, A, D, S);
     ambient += A;
     diffuse += D;
     spec += S;
 
-    ComputeSpotLight(gMaterial, gSpotLight, pin.PosW, pin.NormalW, toEyeW, A, D, S);
+    ComputeSpotLight(gMaterial[0], gSpotLight[0], pin.PosW, pin.NormalW, toEyeW, A, D, S);
     ambient += A;
     diffuse += D;
     spec += S;
@@ -76,7 +81,7 @@ float4 PS(VertexOut pin) : SV_Target
     float4 litColor = ambient + diffuse + spec;
 
 	// Common to take alpha from diffuse material.
-    litColor.a = gMaterial.Diffuse.a;
+    litColor.a = gMaterial[0].Diffuse.a;
 
     return litColor;
 }

@@ -109,15 +109,15 @@
     <CustomBuild Include="shader\color.hlsl">
       <Filter>shader</Filter>
     </CustomBuild>
-    <CustomBuild Include="LightHelper.hlsl">
-      <Filter>shader</Filter>
-    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="LightPS.hlsl">
+    <FxCompile Include="shader\Light.hlsl">
       <Filter>shader</Filter>
     </FxCompile>
-    <FxCompile Include="Light.hlsl">
+    <FxCompile Include="shader\LightHelper.hlsl">
+      <Filter>shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\LightPS.hlsl">
       <Filter>shader</Filter>
     </FxCompile>
   </ItemGroup>
