@@ -1,33 +1,24 @@
 #pragma once
 #include "d3dApp.h"
+#include "d3dx11Effect.h"
 #include "GeometryGenerator.h"
 #include "MathHelper.h"
-#include "LightHelper.h"
 #include "Waves.h"
 
-class LightingApp : public D3DApp
+class LightingApp :public D3DApp
 {
 private:
 	struct Vertex
 	{
 		XMFLOAT3 Pos;
 		XMFLOAT3 Normal;
+		XMFLOAT4 Color;
 	};
 	struct MatrixBufferType
 	{
-		XMMATRIX world;
-		XMMATRIX worldInvTranspose;
 		XMMATRIX mvp;
 	};
-	struct LightType
-	{
-		DirectionalLight dirLight;
-		PointLight pointLight;
-		SpotLight spotLight;
-		Material material;
-		XMFLOAT3 eyePos;
-		float padding;
-	};
+
 public:
 	LightingApp(HINSTANCE hInstance);
 	~LightingApp();
@@ -41,31 +32,18 @@ public:
 	void OnMouseUp(WPARAM btnState, int x, int y);
 	void OnMouseMove(WPARAM btnState, int x, int y);
 private:
-	float GetHillHeight(float x, float z)const;
-	XMFLOAT3 GetHillNormal(float x, float z)const;
+	float GetHeight(float x, float z)const;
 	void BuildLandGeometryBuffers();
-	void BuildWaveGeometryBuffers();
+	void BuildWavesGeometryBuffers();
 	void BuildFX();
 	void BuildConstantBuffer();
-	void SetShaderParameters(const XMFLOAT4X4 worldMatrix, const Material material);
-	void SetLightParameters();
+	void SetShaderParameters(const XMFLOAT4X4 worldMatrix);
 private:
 	ID3D11Buffer* mLandVB;
 	ID3D11Buffer* mLandIB;
 	ID3D11Buffer* mWavesVB;
 	ID3D11Buffer* mWavesIB;
-
 	ID3D11Buffer* mMatrixBuffer;
-	ID3D11Buffer* mLightBuffer;
-	ID3D11Buffer* mMaterialBuffer;
-	ID3D11ShaderResourceView* MaterialResourceView;
-	ID3D11Buffer* mDirLightBuffer;
-	ID3D11ShaderResourceView* DirLightResourceView;
-	ID3D11Buffer* mPointLightBuffer;
-	ID3D11ShaderResourceView* PointLightResourceView;
-	ID3D11Buffer* mSpotLightBuffer;
-	ID3D11ShaderResourceView* SpotLightBufferResourceView;
-
 
 	ID3D11VertexShader* mVertexShader;
 	ID3D11PixelShader* mPixelShader;
@@ -73,20 +51,11 @@ private:
 
 	ID3D11RasterizerState* mWireframeRS;
 	// Define transformations from local spaces to world space.
-	XMFLOAT4X4 mLandWorld;
+	XMFLOAT4X4 mGridWorld;
 	XMFLOAT4X4 mWavesWorld;
-
-	UINT mLandIndexCount;
+	UINT mGridIndexCount;
 
 	Waves mWaves;
-
-	LightType mLight;
-
-	DirectionalLight mDirLight;
-	PointLight mPointLight;
-	SpotLight mSpotLight;
-	Material mLandMat;
-	Material mWavesMat;
 
 	XMFLOAT4X4 mView;
 	XMFLOAT4X4 mProj;
@@ -96,5 +65,4 @@ private:
 	float mRadius;
 
 	POINT mLastMousePos;
-
 };
