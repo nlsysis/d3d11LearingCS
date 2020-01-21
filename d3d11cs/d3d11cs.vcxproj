@@ -140,6 +140,8 @@
     <ClCompile Include="common\d3dUtil.cpp" />
     <ClCompile Include="common\GameTimer.cpp" />
     <ClCompile Include="common\GeometryGenerator.cpp" />
+    <ClCompile Include="common\Keyboard.cpp" />
+    <ClCompile Include="common\Mouse.cpp" />
     <ClCompile Include="CreateApp.cpp" />
     <ClCompile Include="GeometryApp.cpp" />
     <ClCompile Include="HillsApp.cpp" />
@@ -163,6 +165,8 @@
     <ClInclude Include="common\d3dUtil.h" />
     <ClInclude Include="common\GameTimer.h" />
     <ClInclude Include="common\GeometryGenerator.h" />
+    <ClInclude Include="common\Keyboard.h" />
+    <ClInclude Include="common\Mouse.h" />
     <ClInclude Include="CreateApp.h" />
     <ClInclude Include="GeometryApp.h" />
     <ClInclude Include="HillsApp.h" />

@@ -61,6 +61,7 @@ void GeometryApp::UpdateScene(float dt)
 
 	XMMATRIX V = XMMatrixLookAtLH(pos, target, up);
 	XMStoreFloat4x4(&mView, V);
+	UpdateInput(dt);
 }
 
 
@@ -85,6 +86,34 @@ void GeometryApp::DrawScene()
 	md3dDeviceContext->Draw(3, 0);
 
 	HR(mSwapChain->Present(0, 0));
+}
+void GeometryApp::UpdateInput(float dt)
+{
+	//get mouse state
+	DirectX::Mouse::State mouseState = m_pMouse->GetState();
+	DirectX::Mouse::State lastMouseState = m_MouseTracker.GetLastState();
+	//get keyboard state
+	DirectX::Keyboard::State keyState = m_pKeyboard->GetState();
+	DirectX::Keyboard::State lastKeyState = m_KeyboardTracker.GetLastState();
+
+	//update mousestate
+	m_MouseTracker.Update(mouseState);
+	m_KeyboardTracker.Update(keyState);
+	m_KeyboardTracker.Update(keyState);
+	if (mouseState.leftButton == true && m_MouseTracker.leftButton == m_MouseTracker.HELD)
+	{
+		mTheta -= (mouseState.x - lastMouseState.x) * 0.01f;
+		mPhi -= (mouseState.y - lastMouseState.y) * 0.01f;
+	}
+	if (keyState.IsKeyDown(DirectX::Keyboard::W))
+		mPhi += dt * 2;
+	if (keyState.IsKeyDown(DirectX::Keyboard::S))
+		mPhi -= dt * 2;
+	if (keyState.IsKeyDown(DirectX::Keyboard::A))
+		mTheta += dt * 2;
+	if (keyState.IsKeyDown(DirectX::Keyboard::D))
+		mTheta -= dt * 2;
+
 }
 void GeometryApp::OnMouseDown(WPARAM btnState, int x, int y)
 {

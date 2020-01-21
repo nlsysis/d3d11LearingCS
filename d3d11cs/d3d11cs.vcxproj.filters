@@ -90,6 +90,12 @@
     <ClCompile Include="reference\Vertex.cpp">
       <Filter>reference</Filter>
     </ClCompile>
+    <ClCompile Include="common\Keyboard.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="common\Mouse.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common\D3DApp.h">
@@ -154,6 +160,12 @@
     </ClInclude>
     <ClInclude Include="reference\Vertex.h">
       <Filter>reference</Filter>
+    </ClInclude>
+    <ClInclude Include="common\Keyboard.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="common\Mouse.h">
+      <Filter>common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

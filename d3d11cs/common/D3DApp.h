@@ -1,8 +1,10 @@
-#pragma once
+ï»¿#pragma once
 
 #include "d3dUtil.h"
 #include "GameTimer.h"
 #include <string>
+#include "Mouse.h"
+#include "Keyboard.h"
 
 #pragma comment(lib,"d3d11.lib")
 #pragma comment(lib,"d3dx11d.lib")
@@ -37,19 +39,19 @@ protected:
 	void CalculateFrameStats();
 
 protected:
-	HINSTANCE mhAppInst;     // ?—p’ö˜?—á‹å•¿
-	HWND      mhMainWnd;     // åâxŒû‹å•¿
-	bool      mAppPaused;    // ’ö˜¥”Û?İ?’âó?
-	bool      mMinimized;    // ’ö˜¥”ÛÅ¬‰»
-	bool      mMaximized;    // ’ö˜¥”ÛÅ‘å‰»
-	bool      mResizing;     // ’ö˜¥”Û?İ‰ü?‘å¬“Ió?
-	UINT      m4xMsaaQuality;// 4X MSAA?—Ê“™?
+	HINSTANCE mhAppInst;     // ?ç”¨ç¨‹åº?ä¾‹å¥æŸ„
+	HWND      mhMainWnd;     // ä¸»çª—å£å¥æŸ„
+	bool      mAppPaused;    // ç¨‹åºæ˜¯å¦?åœ¨?åœçŠ¶?
+	bool      mMinimized;    // ç¨‹åºæ˜¯å¦æœ€å°åŒ–
+	bool      mMaximized;    // ç¨‹åºæ˜¯å¦æœ€å¤§åŒ–
+	bool      mResizing;     // ç¨‹åºæ˜¯å¦?åœ¨æ”¹?å¤§å°çš„çŠ¶?
+	UINT      m4xMsaaQuality;// 4X MSAA?é‡ç­‰?
 
-	// —p˜°??"delta-time"˜aŸà???(˜4.3)
+	// ç”¨äº??"delta-time"å’Œæ¸¸???(Â§4.3)
 	GameTimer mTimer;
 
-	//  D3D11??(˜4.2.1)CŒğ??(˜4.2.4)C—p˜°[“x/–Í”Â?‘¶“I2D?—(˜4.2.6)C
-	//  ?õ–Ú?(˜4.2.5)˜a[“x/–Í”Â??(˜4.2.6)C˜a?Œû(˜4.2.8)B
+	//  D3D11??(Â§4.2.1)ï¼Œäº¤??(Â§4.2.4)ï¼Œç”¨äºæ·±åº¦/æ¨¡æ¿?å­˜çš„2D?ç†(Â§4.2.6)ï¼Œ
+	//  ?æŸ“ç›®?(Â§4.2.5)å’Œæ·±åº¦/æ¨¡æ¿??(Â§4.2.6)ï¼Œå’Œ?å£(Â§4.2.8)ã€‚
 	ID3D11Device* md3dDevice;
 	ID3D11DeviceContext* md3dDeviceContext;
 	IDXGISwapChain* mSwapChain;
@@ -60,17 +62,22 @@ protected:
 	D3D11_VIEWPORT mScreenViewport;
 	ID3D11RasterizerState* m_rasterState;
 
-	//  ‰º–Ê“I?—Ê¥İD3DApp?‘¢”Ÿ”’†?’u“IB’A¥C?‰ÂˆÈİ”h¶?’†dÊ?±?B
+	std::unique_ptr<DirectX::Mouse> m_pMouse;						// mouse
+	DirectX::Mouse::ButtonStateTracker m_MouseTracker;				// mouse state tracker
+	std::unique_ptr<DirectX::Keyboard> m_pKeyboard;					// keyboard
+	DirectX::Keyboard::KeyboardStateTracker m_KeyboardTracker;		// keyboard state tracker
 
-	//  âxŒû??BD3DApp“IàÒ???¥"D3D11 Application"B
+	//  ä¸‹é¢çš„?é‡æ˜¯åœ¨D3DApp?é€ å‡½æ•°ä¸­?ç½®çš„ã€‚ä½†æ˜¯ï¼Œ?å¯ä»¥åœ¨æ´¾ç”Ÿ?ä¸­é‡å†™?äº›?ã€‚
+
+	//  çª—å£??ã€‚D3DAppçš„é»˜???æ˜¯"D3D11 Application"ã€‚
 	std::wstring mMainWndCaption;
 
-	//  Hardware device?¥reference deviceHD3DAppàÒ?g—pD3D_DRIVER_TYPE_HARDWAREB
+	//  Hardware device?æ˜¯reference deviceï¼ŸD3DAppé»˜?ä½¿ç”¨D3D_DRIVER_TYPE_HARDWAREã€‚
 	D3D_DRIVER_TYPE md3dDriverType;
-	// âxŒû“I‰n‘å¬BD3DAppàÒ??800x600B’ˆÓC“–âxŒû‘å¬İ?s?’i‰ü??C?±?–ç‰ï”V‰ü?B
+	// çª—å£çš„åˆå§‹å¤§å°ã€‚D3DAppé»˜??800x600ã€‚æ³¨æ„ï¼Œå½“çª—å£å¤§å°åœ¨?è¡Œ?æ®µæ”¹??ï¼Œ?äº›?ä¹Ÿä¼šéšä¹‹æ”¹?ã€‚
 	int mClientWidth;
 	int mClientHeight;
-	//  ?’u?true?g—p4XMSAA(˜4.1.8)CàÒ??falseB
+	//  ?ç½®?true?ä½¿ç”¨4XMSAA(Â§4.1.8)ï¼Œé»˜??falseã€‚
 	bool mEnable4xMsaa;
 
 };
