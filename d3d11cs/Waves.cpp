@@ -41,6 +41,15 @@ UINT Waves::TriangleCount()const
 {
 	return mTriangleCount;
 }
+float Waves::Width()const
+{
+	return mNumCols * mSpatialStep;
+}
+
+float Waves::Depth()const
+{
+	return mNumRows * mSpatialStep;
+}
 /**
 	*@brief it is like init grid but add elements to record the position of point
 */

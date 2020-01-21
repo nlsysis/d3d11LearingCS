@@ -1,4 +1,4 @@
-#include "d3dApp.h"
+﻿#include "d3dApp.h"
 #include <WindowsX.h>
 #include <sstream>
 #include <memory>
@@ -113,6 +113,9 @@ int D3DApp::Run()
 
 bool D3DApp::Init()
 {
+	m_pMouse = std::make_unique<DirectX::Mouse>();
+	m_pKeyboard = std::make_unique<DirectX::Keyboard>();
+
 	if (!InitMainWindow())
 		return false;
 
@@ -278,18 +281,39 @@ LRESULT D3DApp::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		((MINMAXINFO*)lParam)->ptMinTrackSize.y = 200;
 		return 0;
 
+	case WM_MENUCHAR:
+	// Don't beep when we alt-enter.
+		return MAKELRESULT(0, MNC_CLOSE);
+
+	// monitor the mouse event.
+	case WM_INPUT:
+
 	case WM_LBUTTONDOWN:
 	case WM_MBUTTONDOWN:
 	case WM_RBUTTONDOWN:
-		OnMouseDown(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-		return 0;
+	case WM_XBUTTONDOWN:
+
 	case WM_LBUTTONUP:
 	case WM_MBUTTONUP:
 	case WM_RBUTTONUP:
-		OnMouseUp(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-		return 0;
+	case WM_XBUTTONUP:
+
+	case WM_MOUSEWHEEL:
+	case WM_MOUSEHOVER:
 	case WM_MOUSEMOVE:
-		OnMouseMove(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		m_pMouse->ProcessMessage(msg, wParam, lParam);
+		return 0;
+
+	case WM_KEYDOWN:
+	case WM_SYSKEYDOWN:
+	case WM_KEYUP:
+	case WM_SYSKEYUP:
+		m_pKeyboard->ProcessMessage(msg, wParam, lParam);
+		return 0;
+
+	case WM_ACTIVATEAPP:
+		m_pMouse->ProcessMessage(msg, wParam, lParam);
+		m_pKeyboard->ProcessMessage(msg, wParam, lParam);
 		return 0;
 	}
 	return DefWindowProc(hwnd, msg, wParam, lParam);
@@ -343,7 +367,7 @@ bool D3DApp::InitDirect3D()
 {
 	// Create the device and device context.
 
-	UINT createDeviceFlags = 0;
+	UINT createDeviceFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;  //directx2D need BGRA support
 #if defined(DEBUG) || defined(_DEBUG)  
 	createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif

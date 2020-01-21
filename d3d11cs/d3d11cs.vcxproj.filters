@@ -16,6 +16,15 @@
     <Filter Include="main\wave">
       <UniqueIdentifier>{f91ee219-cd01-4f73-9a65-87fd8eb3e0a0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="main\texture">
+      <UniqueIdentifier>{36e75775-205e-4452-8405-ac9958e28024}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\Blending">
+      <UniqueIdentifier>{3423d10e-872f-40bd-8576-537796e2cf97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\Geometry">
+      <UniqueIdentifier>{1d2ba238-e72c-44d0-b7ec-d26bce08777f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="InitDirectx3D.cpp">
@@ -35,9 +44,6 @@
     </ClCompile>
     <ClCompile Include="reference\MathHelper.cpp">
       <Filter>reference</Filter>
-    </ClCompile>
-    <ClCompile Include="GeometryGenerator.cpp">
-      <Filter>common</Filter>
     </ClCompile>
     <ClCompile Include="BoxApp.cpp">
       <Filter>main</Filter>
@@ -60,6 +66,36 @@
     <ClCompile Include="LightingApp.cpp">
       <Filter>main</Filter>
     </ClCompile>
+    <ClCompile Include="LitSkullApp.cpp">
+      <Filter>main</Filter>
+    </ClCompile>
+    <ClCompile Include="CreateApp.cpp">
+      <Filter>main\texture</Filter>
+    </ClCompile>
+    <ClCompile Include="TexturedHillsAndWavesApp.cpp">
+      <Filter>main\texture</Filter>
+    </ClCompile>
+    <ClCompile Include="BlendApp.cpp">
+      <Filter>main\Blending</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderStates.cpp">
+      <Filter>main\Blending</Filter>
+    </ClCompile>
+    <ClCompile Include="GeometryApp.cpp">
+      <Filter>main\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="common\GeometryGenerator.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="reference\Vertex.cpp">
+      <Filter>reference</Filter>
+    </ClCompile>
+    <ClCompile Include="common\Keyboard.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="common\Mouse.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common\D3DApp.h">
@@ -79,9 +115,6 @@
     </ClInclude>
     <ClInclude Include="reference\MathHelper.h">
       <Filter>reference</Filter>
-    </ClInclude>
-    <ClInclude Include="GeometryGenerator.h">
-      <Filter>common</Filter>
     </ClInclude>
     <ClInclude Include="BoxApp.h">
       <Filter>main</Filter>
@@ -104,23 +137,56 @@
     <ClInclude Include="LightingApp.h">
       <Filter>main</Filter>
     </ClInclude>
+    <ClInclude Include="LitSkullApp.h">
+      <Filter>main</Filter>
+    </ClInclude>
+    <ClInclude Include="CreateApp.h">
+      <Filter>main\texture</Filter>
+    </ClInclude>
+    <ClInclude Include="TexturedHillsAndWavesApp.h">
+      <Filter>main\texture</Filter>
+    </ClInclude>
+    <ClInclude Include="BlendApp.h">
+      <Filter>main\Blending</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderStates.h">
+      <Filter>main\Blending</Filter>
+    </ClInclude>
+    <ClInclude Include="GeometryApp.h">
+      <Filter>main\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="common\GeometryGenerator.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="reference\Vertex.h">
+      <Filter>reference</Filter>
+    </ClInclude>
+    <ClInclude Include="common\Keyboard.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="common\Mouse.h">
+      <Filter>common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="shader\color.hlsl">
       <Filter>shader</Filter>
     </CustomBuild>
-    <CustomBuild Include="LightHelper.hlsl">
+    <CustomBuild Include="shader\Light.hlsl">
       <Filter>shader</Filter>
     </CustomBuild>
-    <CustomBuild Include="Light.hlsl">
+    <CustomBuild Include="shader\LightHelper.hlsl">
+      <Filter>shader</Filter>
+    </CustomBuild>
+    <CustomBuild Include="shader\Blending.hlsl">
+      <Filter>shader</Filter>
+    </CustomBuild>
+    <CustomBuild Include="shader\LitSkull.hlsl">
       <Filter>shader</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="LightPS.hlsl">
-      <Filter>shader</Filter>
-    </FxCompile>
-    <FxCompile Include="LightVS.hlsl">
+    <FxCompile Include="shader\Geometry.hlsl">
       <Filter>shader</Filter>
     </FxCompile>
   </ItemGroup>
