@@ -81,7 +81,7 @@ public:
 			throw std::exception("Keyboard is a singleton");
 		}
 
-		s_keyboard = this;
+		s_keyboard = this;   //ignore this compile error because I can not find a better way and it will not go wrong in release.
 	}
 
 	~Impl()
