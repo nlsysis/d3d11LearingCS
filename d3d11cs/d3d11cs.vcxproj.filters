@@ -22,6 +22,9 @@
     <Filter Include="main\Blending">
       <UniqueIdentifier>{3423d10e-872f-40bd-8576-537796e2cf97}</UniqueIdentifier>
     </Filter>
+    <Filter Include="main\Geometry">
+      <UniqueIdentifier>{1d2ba238-e72c-44d0-b7ec-d26bce08777f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="InitDirectx3D.cpp">
@@ -41,9 +44,6 @@
     </ClCompile>
     <ClCompile Include="reference\MathHelper.cpp">
       <Filter>reference</Filter>
-    </ClCompile>
-    <ClCompile Include="GeometryGenerator.cpp">
-      <Filter>common</Filter>
     </ClCompile>
     <ClCompile Include="BoxApp.cpp">
       <Filter>main</Filter>
@@ -81,6 +81,15 @@
     <ClCompile Include="RenderStates.cpp">
       <Filter>main\Blending</Filter>
     </ClCompile>
+    <ClCompile Include="GeometryApp.cpp">
+      <Filter>main\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="common\GeometryGenerator.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="reference\Vertex.cpp">
+      <Filter>reference</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common\D3DApp.h">
@@ -100,9 +109,6 @@
     </ClInclude>
     <ClInclude Include="reference\MathHelper.h">
       <Filter>reference</Filter>
-    </ClInclude>
-    <ClInclude Include="GeometryGenerator.h">
-      <Filter>common</Filter>
     </ClInclude>
     <ClInclude Include="BoxApp.h">
       <Filter>main</Filter>
@@ -140,6 +146,15 @@
     <ClInclude Include="RenderStates.h">
       <Filter>main\Blending</Filter>
     </ClInclude>
+    <ClInclude Include="GeometryApp.h">
+      <Filter>main\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="common\GeometryGenerator.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="reference\Vertex.h">
+      <Filter>reference</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="shader\color.hlsl">
@@ -157,5 +172,10 @@
     <CustomBuild Include="shader\LitSkull.hlsl">
       <Filter>shader</Filter>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="shader\Geometry.hlsl">
+      <Filter>shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

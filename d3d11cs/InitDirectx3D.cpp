@@ -9,6 +9,7 @@
 #include "CreateApp.h"
 #include "TexturedHillsAndWavesApp.h"
 #include "BlendApp.h"
+#include "GeometryApp.h"
 
 class InitDirect3DApp : public D3DApp
 {
@@ -31,7 +32,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 #endif
 
 	//InitDirect3DApp theApp(hInstance);
-	BlendApp theApp(hInstance);
+	GeometryApp theApp(hInstance);
 
 	if (!theApp.Init())
 		return 0;
