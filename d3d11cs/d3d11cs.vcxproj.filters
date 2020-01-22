@@ -25,6 +25,9 @@
     <Filter Include="main\Geometry">
       <UniqueIdentifier>{1d2ba238-e72c-44d0-b7ec-d26bce08777f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="common\Font">
+      <UniqueIdentifier>{dc3dd7c4-5580-4183-905a-879d88a13c5a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="InitDirectx3D.cpp">
@@ -38,9 +41,6 @@
     </ClCompile>
     <ClCompile Include="common\GameTimer.cpp">
       <Filter>common</Filter>
-    </ClCompile>
-    <ClCompile Include="reference\d3dx11effect.cpp">
-      <Filter>reference</Filter>
     </ClCompile>
     <ClCompile Include="reference\MathHelper.cpp">
       <Filter>reference</Filter>
@@ -96,6 +96,24 @@
     <ClCompile Include="common\Mouse.cpp">
       <Filter>common</Filter>
     </ClCompile>
+    <ClCompile Include="common\font\fontClass.cpp">
+      <Filter>common\Font</Filter>
+    </ClCompile>
+    <ClCompile Include="common\font\Fontshaderclass.cpp">
+      <Filter>common\Font</Filter>
+    </ClCompile>
+    <ClCompile Include="common\font\TextureClass.cpp">
+      <Filter>common\Font</Filter>
+    </ClCompile>
+    <ClCompile Include="common\font\Textclass.cpp">
+      <Filter>common\Font</Filter>
+    </ClCompile>
+    <ClCompile Include="reference\d3dx11effect.cpp">
+      <Filter>reference</Filter>
+    </ClCompile>
+    <ClCompile Include="common\font\Font2D.cpp">
+      <Filter>common\Font</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common\D3DApp.h">
@@ -106,9 +124,6 @@
     </ClInclude>
     <ClInclude Include="common\GameTimer.h">
       <Filter>common</Filter>
-    </ClInclude>
-    <ClInclude Include="reference\d3dx11effect.h">
-      <Filter>reference</Filter>
     </ClInclude>
     <ClInclude Include="reference\LightHelper.h">
       <Filter>reference</Filter>
@@ -167,6 +182,24 @@
     <ClInclude Include="common\Mouse.h">
       <Filter>common</Filter>
     </ClInclude>
+    <ClInclude Include="common\font\fontClass.h">
+      <Filter>common\Font</Filter>
+    </ClInclude>
+    <ClInclude Include="common\font\Fontshaderclass.h">
+      <Filter>common\Font</Filter>
+    </ClInclude>
+    <ClInclude Include="common\font\TextureClass.h">
+      <Filter>common\Font</Filter>
+    </ClInclude>
+    <ClInclude Include="common\font\Textclass.h">
+      <Filter>common\Font</Filter>
+    </ClInclude>
+    <ClInclude Include="reference\d3dx11effect.h">
+      <Filter>reference</Filter>
+    </ClInclude>
+    <ClInclude Include="common\font\Font2D.h">
+      <Filter>common\Font</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="shader\color.hlsl">
@@ -184,10 +217,11 @@
     <CustomBuild Include="shader\LitSkull.hlsl">
       <Filter>shader</Filter>
     </CustomBuild>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="shader\Geometry.hlsl">
+    <CustomBuild Include="shader\Geometry.hlsl">
       <Filter>shader</Filter>
-    </FxCompile>
+    </CustomBuild>
+    <CustomBuild Include="shader\font.hlsl">
+      <Filter>shader</Filter>
+    </CustomBuild>
   </ItemGroup>
 </Project>

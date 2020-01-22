@@ -61,6 +61,7 @@ protected:
 	ID3D11DepthStencilState* m_depthStencilState;
 	D3D11_VIEWPORT mScreenViewport;
 	ID3D11RasterizerState* m_rasterState;
+	XMMATRIX m_orthoMatrix;
 
 	std::unique_ptr<DirectX::Mouse> m_pMouse;						// mouse
 	DirectX::Mouse::ButtonStateTracker m_MouseTracker;				// mouse state tracker
@@ -77,6 +78,8 @@ protected:
 	// 窗口的初始大小。D3DApp默??800x600。注意，当窗口大小在?行?段改??，?些?也会随之改?。
 	int mClientWidth;
 	int mClientHeight;
+	float mScreenNear;
+	float mScreenDepth;
 	//  ?置?true?使用4XMSAA(§4.1.8)，默??false。
 	bool mEnable4xMsaa;
 

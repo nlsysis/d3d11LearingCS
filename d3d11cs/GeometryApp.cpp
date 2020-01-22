@@ -1,5 +1,6 @@
 #include "GeometryApp.h"
 #include <d3dx10math.h>
+#include "font/Font2D.h"
 
 GeometryApp::GeometryApp(HINSTANCE hInstance)
 	: D3DApp(hInstance), mTriangleVB(0), mVertexShader(0), mGeometryShader(0), mPixelShader(0), mInputLayout(0),
@@ -35,6 +36,7 @@ bool GeometryApp::Init()
 	BuildFX();
 	BuildConstantBuffer();
 
+	Font2D::FontPrint::SetFont(md3dDeviceContext,"TestSS",100.0f,100.0f);
 	return true;
 }
 
@@ -85,6 +87,9 @@ void GeometryApp::DrawScene()
 	md3dDeviceContext->GSSetShader(mGeometryShader, NULL, 0);
 	md3dDeviceContext->Draw(3, 0);
 
+	//draw Font
+	md3dDeviceContext->GSSetShader(0, NULL, 0);   //reset the pipeline
+	Font2D::FontPrint::DrawFont(md3dDeviceContext, m_orthoMatrix);
 	HR(mSwapChain->Present(0, 0));
 }
 void GeometryApp::UpdateInput(float dt)

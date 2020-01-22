@@ -3,6 +3,7 @@
 #include <sstream>
 #include <memory>
 #include <vector>
+#include "font/Font2D.h"
 
 namespace
 {
@@ -40,7 +41,9 @@ D3DApp::D3DApp(HINSTANCE hInstance)
 	mDepthStencilBuffer(0),
 	mRenderTargetView(0),
 	mDepthStencilView(0),
-	m_rasterState(0)
+	m_rasterState(0),
+	mScreenNear(1.0f),
+	mScreenDepth(1000.0f)
 {
 	ZeroMemory(&mScreenViewport, sizeof(D3D11_VIEWPORT));
 	gd3dApp = this;
@@ -122,6 +125,7 @@ bool D3DApp::Init()
 	if (!InitDirect3D())
 		return false;
 
+	Font2D::FontPrint::InitFont(md3dDevice,mhMainWnd,mClientWidth,mClientHeight);
 	return true;
 }
 
@@ -488,7 +492,7 @@ bool D3DApp::InitDirect3D()
 	//// Create the rasterizer state from the description we just filled out.
 	//HR(md3dDevice->CreateRasterizerState(&rasterDesc, &m_rasterState));
 	//md3dDeviceContext->RSSetState(m_rasterState);
-
+	m_orthoMatrix = XMMatrixOrthographicLH((float)mClientWidth, (float)mClientHeight, 0.1f, mScreenDepth);
 	return true;
 }
 /**
