@@ -70,19 +70,6 @@ void GeometryApp::UpdateScene(float dt)
 	XMMATRIX V = XMMatrixLookAtLH(pos, target, up);
 	XMStoreFloat4x4(&mView, V);
 	UpdateInput(dt);
-	// ******************
-	// 切换阶数
-	//
-	static UINT stride = sizeof(Vertex);
-	static UINT offset = 0;
-	for (int i = 0; i < 7; ++i)
-	{
-		if (m_KeyboardTracker.IsKeyPressed((DirectX::Keyboard::Keys)((int)DirectX::Keyboard::D1 + i)))
-		{
-			md3dDeviceContext->IASetVertexBuffers(0, 1, &mTriangleVB[i], &stride, &offset);
-			mCurrIndex = i;
-		}
-	}
 }
 
 
@@ -116,10 +103,12 @@ void GeometryApp::DrawScene()
 	md3dDeviceContext->GSSetShader(mGeometryShader, NULL, 0);*/
 	if (mCurrIndex == 0)
 	{
+		md3dDeviceContext->IASetVertexBuffers(0, 1, &mTriangleVB[0], &stride, &offset);
 		md3dDeviceContext->Draw(3, 0);
 	}
 	else
 	{
+		md3dDeviceContext->IASetVertexBuffers(0, 1, &mTriangleVB[mCurrIndex], &stride, &offset);
 		md3dDeviceContext->DrawAuto();
 	}
 
@@ -154,6 +143,18 @@ void GeometryApp::UpdateInput(float dt)
 		mTheta += dt * 2;
 	if (keyState.IsKeyDown(DirectX::Keyboard::D))
 		mTheta -= dt * 2;
+	// ******************
+	// 切换阶数
+	//
+	UINT stride = sizeof(Vertex);
+	UINT offset = 0;
+	for (int i = 0; i < 7; ++i)
+	{
+		if (keyState.IsKeyDown((DirectX::Keyboard::Keys)((int)DirectX::Keyboard::D1 + i)))
+		{
+			mCurrIndex = i;
+		}
+	}
 
 }
 void GeometryApp::OnMouseDown(WPARAM btnState, int x, int y)
@@ -221,20 +222,22 @@ void GeometryApp::BuildGeometryBuffers()
 	D3D11_SUBRESOURCE_DATA vinitData;
 	vinitData.pSysMem = vertices;
 	HR(md3dDevice->CreateBuffer(&vbd, &vinitData, &mTriangleVB[0]));
+	//init all vertex buffers
 	for (int i = 1; i < 7; ++i)
 	{
 		vbd.ByteWidth *= 3;
 		HR(md3dDevice->CreateBuffer(&vbd, nullptr, &mTriangleVB[i]));
 		SetStreamOutputSplitedTrianglet(mTriangleVB[i-1], mTriangleVB[i]);
+		if (i == 1)
+		{
+			md3dDeviceContext->Draw(3, 0);
+		}
+		else
+		{
+			md3dDeviceContext->DrawAuto();
+		}
 	}
-	if (mCurrIndex == 0)
-	{
-		md3dDeviceContext->Draw(3, 0);
-	}
-	else
-	{
-		md3dDeviceContext->DrawAuto();
-	}
+	
 	
 	//// Create the index buffer
 
@@ -326,8 +329,8 @@ void GeometryApp::BuildFX()
 	// Done with compiled shader.
 	ReleaseCOM(pixelShaderBuffer);
 
-	const D3D11_SO_DECLARATION_ENTRY posColorLayout[2] = {
-		{ 0, "POSITION", 0, 0, 3, 0 },
+	const D3D11_SO_DECLARATION_ENTRY posColorLayout[] = {
+		{ 0, "SV_POSITION", 0, 0, 3, 0 },
 		{ 0, "COLOR", 0, 0, 4, 0 }
 	};
 
@@ -363,9 +366,9 @@ void GeometryApp::BuildFX()
 	{
 		DXTrace(__FILE__, (DWORD)__LINE__, hr, L"D3DX11CompileFromFile", true);
 	}
-	//HR(md3dDevice->CreateGeometryShader(geometryShaderBuffer->GetBufferPointer(), geometryShaderBuffer->GetBufferSize(),
-	//	0,&mGeometryShader));
-	UINT stridePosColor = sizeof(Vertex);
+//	HR(md3dDevice->CreateGeometryShader(geometryShaderBuffer->GetBufferPointer(), geometryShaderBuffer->GetBufferSize(),
+//		0,&mGeometryShader));
+	UINT stridePosColor = sizeof(Vertex) ;
 	HR(md3dDevice->CreateGeometryShaderWithStreamOutput(geometryShaderBuffer->GetBufferPointer(),
 		geometryShaderBuffer->GetBufferSize(),
 		posColorLayout,
