@@ -70,6 +70,12 @@ BlendApp::~BlendApp()
 	ReleaseCOM(mVertexShader);
 	ReleaseCOM(mInputLayout);
 	ReleaseCOM(mSampleState);
+
+	ReleaseCOM(mOffscreenSRV);
+	ReleaseCOM(mOffscreenUAV);
+	ReleaseCOM(mOffscreenRTV);
+	ReleaseCOM(mScreenQuadVB);
+	ReleaseCOM(mScreenQuadIB);
 	RenderStates::DestroyAll();
 }
 
@@ -186,9 +192,6 @@ void BlendApp::UpdateScene(float dt)
 
 	// Combine scale and translation.
 	XMStoreFloat4x4(&mWaterTexTransform, wavesScale*wavesOffset);
-
-
-
 	UpdateInput(dt);
 }
 
@@ -217,7 +220,7 @@ void BlendApp::DrawScene()
 		md3dDeviceContext->OMSetRenderTargets(1, renderTargets, mDepthStencilView);
 
 		mBlur.SetGaussianWeights(4.0f);
-		mBlur.BlurInPlace(md3dDeviceContext, mOffscreenSRV, mOffscreenUAV, 4);
+		mBlur.BlurInPlace(md3dDeviceContext, mOffscreenSRV, mOffscreenUAV, 1);
 
 		//
 		// Draw fullscreen quad with texture of blurred scene on it.
@@ -522,27 +525,28 @@ void BlendApp::BuildOffscreenViews()
 	// the format the texture was created with.
 	HR(md3dDevice->CreateShaderResourceView(offscreenTex, 0, &mOffscreenSRV));
 	HR(md3dDevice->CreateRenderTargetView(offscreenTex, 0, &mOffscreenRTV));
-	HR(md3dDevice->CreateUnorderedAccessView(offscreenTex, 0, &mOffscreenUAV));
+	D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc;
+	uavDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	uavDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
+	uavDesc.Texture2D.MipSlice = 0;
+	HR(md3dDevice->CreateUnorderedAccessView(offscreenTex, &uavDesc, &mOffscreenUAV));
 
 	// View saves a reference to the texture so we can release our reference.
 	ReleaseCOM(offscreenTex);
 }
 void BlendApp::DrawScreenQuad()
 {
-
 	UINT stride = sizeof(Vertex);
 	UINT offset = 0;
 
 	md3dDeviceContext->IASetVertexBuffers(0, 1, &mScreenQuadVB, &stride, &offset);
 	md3dDeviceContext->IASetIndexBuffer(mScreenQuadIB, DXGI_FORMAT_R32_UINT, 0);
 
-	XMFLOAT4X4 identity;
-	XMMATRIX I = XMMatrixIdentity();
-	XMStoreFloat4x4(&identity, I);
-	SetShaderParameters(identity,nullptr,identity);
+
+	SetShaderParameters();
 
 	ID3D11ShaderResourceView* blurOutput = mBlur.GetBlurredOutput();
-	md3dDeviceContext->CSSetShaderResources(0,1,&blurOutput);
+	md3dDeviceContext->PSSetShaderResources(1,1,&blurOutput);
 	md3dDeviceContext->DrawIndexed(6, 0, 0);
 
 }
@@ -590,7 +594,7 @@ void BlendApp::DrawWrapper()
 		md3dDeviceContext->RSSetState(RenderStates::NoCullRS);
 		md3dDeviceContext->DrawIndexed(36, 0, 0);
 		// Restore default render state.
-		//md3dDeviceContext->RSSetState(0);
+		md3dDeviceContext->RSSetState(0);
 	}
 
 
@@ -646,22 +650,45 @@ void BlendApp::SetShaderParameters(const XMFLOAT4X4 worldMatrix, const Material*
 	md3dDeviceContext->VSSetConstantBuffers(0, 1, &mMatrixBuffer);
 
 	//setup pixel constant buffer
+
 	EyeMaterialType* dataPtr2;
 	HR(md3dDeviceContext->Map(mEyeMaterialBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource));
 	dataPtr2 = (EyeMaterialType*)mappedResource.pData;
-	if (material != nullptr)
-	{
-		dataPtr2->gMaterial = *material;
-	}
+	dataPtr2->gMaterial = *material;
 	dataPtr2->gEyePosW = mEyePosW;
 	dataPtr2->gFogColor = (const float*)&Colors::Silver;
 	dataPtr2->gFogStart = 15.0f;
 	dataPtr2->gFogRange = 175.0f;
-//	dataPtr2->padding = XMFLOAT3(0.0f,0.0f,0.0f);
+	//	dataPtr2->padding = XMFLOAT3(0.0f,0.0f,0.0f);
 	dataPtr2->gLightCount = mLightCount;
 	dataPtr2->gFogEnabled = mFogEnable;
 	md3dDeviceContext->PSSetConstantBuffers(1, 1, &mEyeMaterialBuffer);
+	
+}
+void BlendApp::SetShaderParameters()
+{
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+	MatrixBufferType* dataPtr;
 
+	XMMATRIX identity = XMMatrixIdentity();
+
+	HR(md3dDeviceContext->Map(mMatrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource));
+
+	dataPtr = (MatrixBufferType*)mappedResource.pData;
+	dataPtr->world = identity;
+	dataPtr->worldInvTranspose = identity;
+	dataPtr->mvp = identity;
+	dataPtr->texTransform = identity;
+	md3dDeviceContext->Unmap(mMatrixBuffer, 0);
+
+	md3dDeviceContext->VSSetConstantBuffers(0, 1, &mMatrixBuffer);
+
+	EyeMaterialType* dataPtr2;
+	HR(md3dDeviceContext->Map(mEyeMaterialBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource));
+	dataPtr2 = (EyeMaterialType*)mappedResource.pData;
+	dataPtr2->gLightCount = 0;
+	dataPtr2->gFogEnabled = false;
+	md3dDeviceContext->PSSetConstantBuffers(1, 1, &mEyeMaterialBuffer);
 }
 void BlendApp::BuildFX()
 {

@@ -235,13 +235,11 @@
     <CustomBuild Include="shader\Geometry.hlsl">
       <Filter>shader\geometry</Filter>
     </CustomBuild>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="shader\TreeBilloard.hlsl">
+    <CustomBuild Include="shader\Blur.hlsl">
+      <Filter>shader</Filter>
+    </CustomBuild>
+    <CustomBuild Include="shader\TreeBilloard.hlsl">
       <Filter>shader\geometry</Filter>
-    </FxCompile>
-    <FxCompile Include="shader\Blur.hlsl">
-      <Filter>shader\cs</Filter>
-    </FxCompile>
+    </CustomBuild>
   </ItemGroup>
 </Project>

@@ -68,6 +68,7 @@ private:
 	void DrawWrapper();
 
 	void SetShaderParameters(const XMFLOAT4X4 worldMatrix, const Material* material, const XMFLOAT4X4 texTransform);
+	void SetShaderParameters();
 	void BuildFX();
 	void BuildConstantBuffer();
 	void SetLightParameters();

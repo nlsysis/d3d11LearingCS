@@ -18,10 +18,7 @@ cbuffer cbPerFrame : register(b1)
     bool gFogEnabled;
     float padding;
     float4 gFogColor;
-    Material gMaterial;
-    
-    
-    
+    Material gMaterial;    
 };
 
 StructuredBuffer<DirectionalLight> gDirLights : register(t0);
@@ -89,26 +86,28 @@ float4 PS(VertexOut pin) : SV_Target
 	//
 	// Lighting.
 	//
-
-	// Start with a sum of zero. 
-    float4 ambient = float4(0.0f, 0.0f, 0.0f, 0.0f);
-    float4 diffuse = float4(0.0f, 0.0f, 0.0f, 0.0f);
-    float4 spec = float4(0.0f, 0.0f, 0.0f, 0.0f);
-
     float4 litColor = texColor;
+    if (gLightCount > 0)
+    {
+        // Start with a sum of zero. 
+        float4 ambient = float4(0.0f, 0.0f, 0.0f, 0.0f);
+        float4 diffuse = float4(0.0f, 0.0f, 0.0f, 0.0f);
+        float4 spec = float4(0.0f, 0.0f, 0.0f, 0.0f);
     // Sum the light contribution from each light source.  
     [unroll]
-    for (int i = 0; i < gLightCount2; ++i)
-    {
-        float4 A, D, S;
-        ComputeDirectionalLight(gMaterial, gDirLights[i], pin.NormalW, toEye,
+        for (int i = 0; i < gLightCount2; ++i)
+        {
+            float4 A, D, S;
+            ComputeDirectionalLight(gMaterial, gDirLights[i], pin.NormalW, toEye,
 			A, D, S);
 
-        ambient += A;
-        diffuse += D;
-        spec += S;
+            ambient += A;
+            diffuse += D;
+            spec += S;
+        }
+        litColor = texColor * (ambient + diffuse) + spec;
     }
-    litColor = texColor * (ambient + diffuse) + spec;
+	
 
     //
 	// Fogging
