@@ -4,6 +4,8 @@
 
 class GeometryApp :public D3DApp
 {
+public:
+	enum class Mode { SplitedTriangle, CylinderNoCap};
 private:
 	struct Vertex
 	{
@@ -33,15 +35,16 @@ private:
 	void BuildFX();
 	void BuildConstantBuffer();
 	void SetShaderParameters();
-
+	void SetStreamOutputSplitedTrianglet(ID3D11Buffer * vertexBufferIn, ID3D11Buffer * vertexBufferOut);
 private:
-	ID3D11Buffer* mTriangleVB;
+	ID3D11Buffer* mTriangleVB[7];
 	ID3D11Buffer* mTriangleIB;
 	ID3D11Buffer* mMatrixBuffer;
 	ID3D11VertexShader* mVertexShader;
 	ID3D11PixelShader* mPixelShader;
 
 	ID3D11GeometryShader* mGeometryShader;
+	ID3D11VertexShader* mGeometryVertexShader;
 
 	ID3D11InputLayout* mInputLayout;
 
@@ -54,4 +57,5 @@ private:
 	float mRadius;
 
 	POINT mLastMousePos;
+	int mCurrIndex;
 };

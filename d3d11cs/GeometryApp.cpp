@@ -1,9 +1,9 @@
-#include "GeometryApp.h"
+﻿#include "GeometryApp.h"
 #include <d3dx10math.h>
 #include "font/Font2D.h"
 
 GeometryApp::GeometryApp(HINSTANCE hInstance)
-	: D3DApp(hInstance), mTriangleVB(0), mVertexShader(0), mGeometryShader(0), mPixelShader(0), mInputLayout(0),
+	: D3DApp(hInstance), mVertexShader(0), mGeometryShader(0), mPixelShader(0), mInputLayout(0),
 	mTheta(1.5f*MathHelper::Pi), mPhi(0.25f*MathHelper::Pi), mRadius(10.0f)
 {
 	mMainWndCaption = L"Geometry Demo";
@@ -19,7 +19,10 @@ GeometryApp::GeometryApp(HINSTANCE hInstance)
 
 GeometryApp::~GeometryApp()
 {
-	ReleaseCOM(mTriangleVB);
+	for (int i = 0; i < 7; i++)
+	{
+		ReleaseCOM(mTriangleVB[i]);
+	}
 //	ReleaseCOM(mBoxIB);
 	ReleaseCOM(mPixelShader);
 	ReleaseCOM(mVertexShader);
@@ -32,9 +35,12 @@ bool GeometryApp::Init()
 	if (!D3DApp::Init())
 		return false;
 
-	BuildGeometryBuffers();
+	mCurrIndex = 0;
+
+	
 	BuildFX();
 	BuildConstantBuffer();
+	BuildGeometryBuffers();
 
 	Font2D::FontPrint::SetFont(md3dDeviceContext,"TestSS",100.0f,100.0f);
 	return true;
@@ -64,6 +70,19 @@ void GeometryApp::UpdateScene(float dt)
 	XMMATRIX V = XMMatrixLookAtLH(pos, target, up);
 	XMStoreFloat4x4(&mView, V);
 	UpdateInput(dt);
+	// ******************
+	// 切换阶数
+	//
+	static UINT stride = sizeof(Vertex);
+	static UINT offset = 0;
+	for (int i = 0; i < 7; ++i)
+	{
+		if (m_KeyboardTracker.IsKeyPressed((DirectX::Keyboard::Keys)((int)DirectX::Keyboard::D1 + i)))
+		{
+			md3dDeviceContext->IASetVertexBuffers(0, 1, &mTriangleVB[i], &stride, &offset);
+			mCurrIndex = i;
+		}
+	}
 }
 
 
@@ -76,16 +95,33 @@ void GeometryApp::DrawScene()
 	SetShaderParameters();
 	UINT stride = sizeof(Vertex);
 	UINT offset = 0;
-	md3dDeviceContext->IASetVertexBuffers(0, 1, &mTriangleVB, &stride, &offset);
+	//md3dDeviceContext->IASetVertexBuffers(0, 1, &mTriangleVB, &stride, &offset);
 //	md3dDeviceContext->IASetIndexBuffer(mBoxIB, DXGI_FORMAT_R32_UINT, 0);
+	ID3D11Buffer* nullBuffer = nullptr;
+	md3dDeviceContext->SOSetTargets(1, &nullBuffer, &offset);
 
+	md3dDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	md3dDeviceContext->IASetInputLayout(mInputLayout);
+	md3dDeviceContext->VSSetShader(mVertexShader, nullptr, 0);
+
+	md3dDeviceContext->GSSetShader(nullptr, nullptr, 0);
+
+	md3dDeviceContext->RSSetState(nullptr);
+	md3dDeviceContext->PSSetShader(mPixelShader, nullptr, 0);
+	/*md3dDeviceContext->IASetInputLayout(mInputLayout);
 	md3dDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	md3dDeviceContext->VSSetShader(mVertexShader, NULL, 0);
 	md3dDeviceContext->PSSetShader(mPixelShader, NULL, 0);
-	md3dDeviceContext->GSSetShader(mGeometryShader, NULL, 0);
-	md3dDeviceContext->Draw(3, 0);
+	md3dDeviceContext->GSSetShader(mGeometryShader, NULL, 0);*/
+	if (mCurrIndex == 0)
+	{
+		md3dDeviceContext->Draw(3, 0);
+	}
+	else
+	{
+		md3dDeviceContext->DrawAuto();
+	}
 
 	//draw Font
 	md3dDeviceContext->GSSetShader(0, NULL, 0);   //reset the pipeline
@@ -176,17 +212,30 @@ void GeometryApp::BuildGeometryBuffers()
 	};
 
 	D3D11_BUFFER_DESC vbd;
-	vbd.Usage = D3D11_USAGE_DEFAULT;
+	vbd.Usage = D3D11_USAGE_DEFAULT;   //allow the stream write by GPU
 	vbd.ByteWidth = sizeof(vertices);
-	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER | D3D11_BIND_STREAM_OUTPUT;  //add stream out lable
 	vbd.CPUAccessFlags = 0;
 	vbd.MiscFlags = 0;
 	vbd.StructureByteStride = 0;
 	D3D11_SUBRESOURCE_DATA vinitData;
 	vinitData.pSysMem = vertices;
-	HR(md3dDevice->CreateBuffer(&vbd, &vinitData, &mTriangleVB));
-
-
+	HR(md3dDevice->CreateBuffer(&vbd, &vinitData, &mTriangleVB[0]));
+	for (int i = 1; i < 7; ++i)
+	{
+		vbd.ByteWidth *= 3;
+		HR(md3dDevice->CreateBuffer(&vbd, nullptr, &mTriangleVB[i]));
+		SetStreamOutputSplitedTrianglet(mTriangleVB[i-1], mTriangleVB[i]);
+	}
+	if (mCurrIndex == 0)
+	{
+		md3dDeviceContext->Draw(3, 0);
+	}
+	else
+	{
+		md3dDeviceContext->DrawAuto();
+	}
+	
 	//// Create the index buffer
 
 	//UINT indices[] = {
@@ -217,6 +266,7 @@ void GeometryApp::BuildFX()
 	ID3D10Blob* vertexShaderBuffer = 0;
 	ID3D10Blob* pixelShaderBuffer = 0;
 	ID3D10Blob* geometryShaderBuffer = 0;
+	ID3D10Blob* geometryStreamVertexBuffer = 0;
 	ID3D10Blob* compilationMsgs = 0;
 	HRESULT hr = D3DX11CompileFromFile(L".\\shader\\Geometry.hlsl", 0, 0, "VS", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS,
 		0, 0, &vertexShaderBuffer, &compilationMsgs, 0);
@@ -260,6 +310,8 @@ void GeometryApp::BuildFX()
 		{"COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
 
+	HR(md3dDevice->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(),
+		0, &mVertexShader));
 	// Create the input layout
 	unsigned int numElements = sizeof(vertexDesc) / sizeof(vertexDesc[0]);
 	HR(md3dDevice->CreateInputLayout(vertexDesc, numElements, vertexShaderBuffer->GetBufferPointer(),
@@ -274,8 +326,13 @@ void GeometryApp::BuildFX()
 	// Done with compiled shader.
 	ReleaseCOM(pixelShaderBuffer);
 
-	hr = D3DX11CompileFromFile(L".\\shader\\Geometry.hlsl", 0, 0, "GS", "gs_5_0", D3D10_SHADER_ENABLE_STRICTNESS,
-		0, 0, &geometryShaderBuffer, &compilationMsgs, 0);
+	const D3D11_SO_DECLARATION_ENTRY posColorLayout[2] = {
+		{ 0, "POSITION", 0, 0, 3, 0 },
+		{ 0, "COLOR", 0, 0, 4, 0 }
+	};
+
+	hr = D3DX11CompileFromFile(L".\\shader\\Geometry.hlsl", 0, 0, "SoVS", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS,
+		0, 0, &geometryStreamVertexBuffer, &compilationMsgs, 0);
 
 	// compilationMsgs can store errors or warnings.
 	if (compilationMsgs != 0)
@@ -289,9 +346,38 @@ void GeometryApp::BuildFX()
 	{
 		DXTrace(__FILE__, (DWORD)__LINE__, hr, L"D3DX11CompileFromFile", true);
 	}
-	HR(md3dDevice->CreateGeometryShader(geometryShaderBuffer->GetBufferPointer(), geometryShaderBuffer->GetBufferSize(),
-		0,&mGeometryShader));
+	HR(md3dDevice->CreateVertexShader(geometryStreamVertexBuffer->GetBufferPointer(), geometryStreamVertexBuffer->GetBufferSize(),
+		0, &mGeometryVertexShader));
+
+	hr = D3DX11CompileFromFile(L".\\shader\\Geometry.hlsl", 0, 0, "GS", "gs_5_0", D3D10_SHADER_ENABLE_STRICTNESS,
+		0, 0, &geometryShaderBuffer, &compilationMsgs, 0);
+	// compilationMsgs can store errors or warnings.
+	if (compilationMsgs != 0)
+	{
+		MessageBoxA(0, (char*)compilationMsgs->GetBufferPointer(), 0, 0);
+		ReleaseCOM(compilationMsgs);
+	}
+
+	// Even if there are no compilationMsgs, check to make sure there were no other errors.
+	if (FAILED(hr))
+	{
+		DXTrace(__FILE__, (DWORD)__LINE__, hr, L"D3DX11CompileFromFile", true);
+	}
+	//HR(md3dDevice->CreateGeometryShader(geometryShaderBuffer->GetBufferPointer(), geometryShaderBuffer->GetBufferSize(),
+	//	0,&mGeometryShader));
+	UINT stridePosColor = sizeof(Vertex);
+	HR(md3dDevice->CreateGeometryShaderWithStreamOutput(geometryShaderBuffer->GetBufferPointer(),
+		geometryShaderBuffer->GetBufferSize(),
+		posColorLayout,
+		ARRAYSIZE(posColorLayout),
+		&stridePosColor,
+		1,
+		D3D11_SO_NO_RASTERIZED_STREAM,
+		nullptr,
+		&mGeometryShader));
+	
 	ReleaseCOM(geometryShaderBuffer);
+	
 }
 
 void GeometryApp::BuildConstantBuffer()
@@ -327,4 +413,30 @@ void GeometryApp::SetShaderParameters()
 
 	md3dDeviceContext->VSSetConstantBuffers(0, 1, &mMatrixBuffer);
 
+}
+
+void GeometryApp::SetStreamOutputSplitedTrianglet(ID3D11Buffer * vertexBufferIn, ID3D11Buffer * vertexBufferOut)
+{
+	UINT stride = sizeof(Vertex);
+	UINT offset = 0;
+	ID3D11Buffer *nullBuffer = nullptr;
+
+	//reset the outstream buffer
+	md3dDeviceContext->SOSetTargets(1, &nullBuffer, &offset);
+
+	md3dDeviceContext->IASetInputLayout(nullptr);
+	md3dDeviceContext->SOSetTargets(0, nullptr, &offset);
+
+	md3dDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	md3dDeviceContext->IASetInputLayout(mInputLayout);
+
+	md3dDeviceContext->IASetVertexBuffers(0, 1, &vertexBufferIn, &stride, &offset);
+
+	md3dDeviceContext->VSSetShader(mGeometryVertexShader, nullptr, 0);
+	md3dDeviceContext->GSSetShader(mGeometryShader, nullptr, 0);
+
+	md3dDeviceContext->SOSetTargets(1, &vertexBufferOut, &offset);
+
+	md3dDeviceContext->RSSetState(nullptr);
+	md3dDeviceContext->PSSetShader(nullptr, nullptr, 0);
 }

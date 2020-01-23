@@ -28,6 +28,9 @@
     <Filter Include="common\Font">
       <UniqueIdentifier>{dc3dd7c4-5580-4183-905a-879d88a13c5a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="shader\geometry">
+      <UniqueIdentifier>{015ca3e7-489f-4487-bc6a-a60cdd8d994e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="InitDirectx3D.cpp">
@@ -217,11 +220,11 @@
     <CustomBuild Include="shader\LitSkull.hlsl">
       <Filter>shader</Filter>
     </CustomBuild>
-    <CustomBuild Include="shader\Geometry.hlsl">
-      <Filter>shader</Filter>
-    </CustomBuild>
     <CustomBuild Include="shader\font.hlsl">
       <Filter>shader</Filter>
+    </CustomBuild>
+    <CustomBuild Include="shader\Geometry.hlsl">
+      <Filter>shader\geometry</Filter>
     </CustomBuild>
   </ItemGroup>
 </Project>

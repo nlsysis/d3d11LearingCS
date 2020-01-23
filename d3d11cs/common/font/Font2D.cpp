@@ -1,13 +1,16 @@
 #include "Font2D.h"
+#include <wrl/client.h>
+#include <memory>
 
+using namespace Microsoft::WRL;
 using namespace Font2D;
 
-TextClass* m_Text;
+std::unique_ptr<class TextClass>  m_Text;
 XMMATRIX m_worldMatrix;
-ID3D11BlendState* m_alphaEnableBlendingState;
-ID3D11BlendState* m_alphaDisableBlendingState;
-ID3D11DepthStencilState* m_depthStencilState;
-ID3D11DepthStencilState* m_depthDisabledStencilState;
+ComPtr <ID3D11BlendState> m_alphaEnableBlendingState = nullptr;
+ComPtr <ID3D11BlendState> m_alphaDisableBlendingState = nullptr;
+ComPtr <ID3D11DepthStencilState> m_depthStencilState = nullptr;
+ComPtr <ID3D11DepthStencilState> m_depthDisabledStencilState = nullptr;
 void FontPrint::InitFont(ID3D11Device* md3dDevice,HWND hWnd,int screenWidth, int screenHeight)
 {
 	XMMATRIX baseViewMatrix;
@@ -15,8 +18,8 @@ void FontPrint::InitFont(ID3D11Device* md3dDevice,HWND hWnd,int screenWidth, int
 	FXMVECTOR position = XMVectorSet(0.0f, 0.0f, -1.0f,1.0f);
 	FXMVECTOR lookAt = XMVectorSet(0.0f, 0.0f, 1.0f,1.0f);
 	baseViewMatrix = XMMatrixLookAtLH(position, lookAt, up);
-	m_Text = new TextClass;
 	
+	m_Text = std::make_unique<TextClass>();
 	m_Text->Initialize(md3dDevice,hWnd, screenWidth, screenHeight, baseViewMatrix);
 
 	D3D11_BLEND_DESC blendStateDescription;
@@ -75,13 +78,13 @@ void FontPrint::SetFont(ID3D11DeviceContext* md3dDeviceContext,const char*text,f
 }
 void FontPrint::DrawFont(ID3D11DeviceContext* md3dDeviceContext,XMMATRIX orthoMatrix)
 {
-	md3dDeviceContext->OMSetDepthStencilState(m_depthDisabledStencilState, 1);  //turnoff Z buffer
+	md3dDeviceContext->OMSetDepthStencilState(m_depthDisabledStencilState.Get(), 1);  //turnoff Z buffer
 	TurnOnAlphaBlending(md3dDeviceContext);
 
 	m_Text->Render(md3dDeviceContext, m_worldMatrix, orthoMatrix);
 
 	TurnOffAlphaBlending(md3dDeviceContext);
-	md3dDeviceContext->OMSetDepthStencilState(m_depthStencilState, 1);  //turnoff Z buffer
+	md3dDeviceContext->OMSetDepthStencilState(m_depthStencilState.Get(), 1);  //turnoff Z buffer
 	
 }
 
@@ -94,7 +97,7 @@ void FontPrint::TurnOnAlphaBlending(ID3D11DeviceContext* md3dDeviceContext)
 	blendFactor[2] = 0.0f;
 	blendFactor[3] = 0.0f;
 
-	md3dDeviceContext->OMSetBlendState(m_alphaEnableBlendingState, blendFactor, 0xffffffff);
+	md3dDeviceContext->OMSetBlendState(m_alphaEnableBlendingState.Get(), blendFactor, 0xffffffff);
 }
 void FontPrint::TurnOffAlphaBlending(ID3D11DeviceContext* md3dDeviceContext)
 {
@@ -108,5 +111,5 @@ void FontPrint::TurnOffAlphaBlending(ID3D11DeviceContext* md3dDeviceContext)
 	blendFactor[3] = 0.0f;
 
 	// Turn off the alpha blending.
-	md3dDeviceContext->OMSetBlendState(m_alphaDisableBlendingState, blendFactor, 0xffffffff);
+	md3dDeviceContext->OMSetBlendState(m_alphaDisableBlendingState.Get(), blendFactor, 0xffffffff);
 }

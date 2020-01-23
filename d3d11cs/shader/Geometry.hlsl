@@ -38,9 +38,23 @@ float4 PS(VertexOut pin) : SV_Target
     return pin.Color;
 }
 
+
+VertexOut SoVS(VertexOut vin)
+{
+    return vin;
+}
+
 [maxvertexcount(9)]
 void GS(triangle VertexOut input[3], inout TriangleStream<VertexOut> output)
 {
+    //       v1
+    //       /\
+    //      /  \
+    //   v3/____\v4
+    //    /\xxxx/\
+    //   /  \xx/  \
+    //  /____\/____\
+    // v0    v5    v2
     VertexOut vertices[6];
     int i;
     [unroll]
