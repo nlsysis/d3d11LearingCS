@@ -135,6 +135,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BlendApp.cpp" />
+    <ClCompile Include="BlurFilter.cpp" />
     <ClCompile Include="BoxApp.cpp" />
     <ClCompile Include="common\D3DApp.cpp" />
     <ClCompile Include="common\d3dUtil.cpp" />
@@ -165,6 +166,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BlendApp.h" />
+    <ClInclude Include="BlurFilter.h" />
     <ClInclude Include="BoxApp.h" />
     <ClInclude Include="common\D3DApp.h" />
     <ClInclude Include="common\d3dUtil.h" />
@@ -229,6 +231,16 @@
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="shader\font.hlsl">
+      <FileType>Document</FileType>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="shader\TreeBilloard.hlsl">
+      <FileType>Document</FileType>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="shader\Blur.hlsl">
       <FileType>Document</FileType>
     </CustomBuild>
   </ItemGroup>

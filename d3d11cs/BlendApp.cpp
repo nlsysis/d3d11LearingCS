@@ -1,4 +1,5 @@
 #include "BlendApp.h"
+#include "font/Font2D.h"
 
 BlendApp::BlendApp(HINSTANCE hInstance)
 	: D3DApp(hInstance), mLandVB(0), mLandIB(0), mWavesVB(0), mWavesIB(0), mBoxVB(0), mBoxIB(0), mGrassMapSRV(0), mWavesMapSRV(0), mBoxMapSRV(0),
@@ -96,7 +97,11 @@ bool BlendApp::Init()
 	BuildFX();
 	BuildConstantBuffer();
 	BuildSampler();
+	BuildScreenQuadGeometryBuffers();
+	BuildOffscreenViews();
 	RenderStates::InitAll(md3dDevice);
+
+	Font2D::FontPrint::SetFont(md3dDeviceContext, "Normal:L,   Fog:F", 10.0f, 40.0f);
 	return true;
 }
 
@@ -106,6 +111,10 @@ void BlendApp::OnResize()
 
 	XMMATRIX P = XMMatrixPerspectiveFovLH(0.25f*MathHelper::Pi, GetAspectRatio(), 1.0f, 1000.0f);
 	XMStoreFloat4x4(&mProj, P);
+
+	// Recreate the resources that depend on the client area size.
+	BuildOffscreenViews();
+	mBlur.Init(md3dDevice, mClientWidth, mClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM);
 }
 
 void BlendApp::UpdateScene(float dt)
@@ -178,98 +187,52 @@ void BlendApp::UpdateScene(float dt)
 	// Combine scale and translation.
 	XMStoreFloat4x4(&mWaterTexTransform, wavesScale*wavesOffset);
 
-	//
-	// Switch the render mode based in key input.
-	//
-	if (GetAsyncKeyState('1') & 0x8000)
-		mRenderOptions = RenderOptions::Lighting;
 
-	if (GetAsyncKeyState('2') & 0x8000)
-		mRenderOptions = RenderOptions::Textures;
 
-	if (GetAsyncKeyState('3') & 0x8000)
-		mRenderOptions = RenderOptions::TexturesAndFog;
+	UpdateInput(dt);
 }
 
 void BlendApp::DrawScene()
 {
-	md3dDeviceContext->ClearRenderTargetView(mRenderTargetView, reinterpret_cast<const float*>(&Colors::Silver));
+	// Render to our offscreen texture.  Note that we can use the same depth/stencil buffer
+	// we normally use since our offscreen texture matches the dimensions.
+	ID3D11RenderTargetView* renderTargets[1] = { mOffscreenRTV };
+	md3dDeviceContext->OMSetRenderTargets(1, renderTargets, mDepthStencilView);
+
+	md3dDeviceContext->ClearRenderTargetView(mOffscreenRTV, reinterpret_cast<const float*>(&Colors::Silver));
 	md3dDeviceContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-	md3dDeviceContext->IASetInputLayout(mInputLayout);
-	md3dDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	md3dDeviceContext->PSSetSamplers(0, 1, &mSampleState);
-	md3dDeviceContext->VSSetShader(mVertexShader, NULL, 0);
-	md3dDeviceContext->PSSetShader(mPixelShader, NULL, 0);
-
-	float blendFactor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-
-	
-	// Set per frame constants.
-	SetLightParameters();
-	switch (mRenderOptions)
-	{
-	case RenderOptions::Lighting:
-		mLightCount = 3;
-		mFogEnable = 0;
-		break;
-	case RenderOptions::Textures:
-		mFogEnable = 0;
-		break;
-	case RenderOptions::TexturesAndFog:
-		mFogEnable = 1;
-		mLightCount = 3;
-		break;
-	}
-
-
-	UINT stride = sizeof(Vertex);
-	UINT offset = 0;
 	//
-	// Draw the box with alpha clipping.
-	// 
-	{
-		md3dDeviceContext->IASetVertexBuffers(0, 1, &mBoxVB, &stride, &offset);
-		md3dDeviceContext->IASetIndexBuffer(mBoxIB, DXGI_FORMAT_R32_UINT, 0);
-
-		SetShaderParameters(mBoxWorld, mBoxMat, mBoxTexTransform);
-		md3dDeviceContext->PSSetShaderResources(1, 1, &mBoxMapSRV);
-		md3dDeviceContext->RSSetState(RenderStates::NoCullRS);
-		md3dDeviceContext->DrawIndexed(36, 0, 0);
-		// Restore default render state.
-		md3dDeviceContext->RSSetState(0);
-	}
-	
-
+	// Draw the scene to the offscreen texture
 	//
-	// Draw the hills and water with texture and fog (no alpha clipping needed).
+	DrawWrapper();
+	////////////////////////////////////////////////////////////////////////////////
 	//
-	{
-		//
-		// Draw the hills.
-		//
-		md3dDeviceContext->IASetVertexBuffers(0, 1, &mLandVB, &stride, &offset);
-		md3dDeviceContext->IASetIndexBuffer(mLandIB, DXGI_FORMAT_R32_UINT, 0);
+	// Restore the back buffer.  The offscreen render target will serve as an input into
+	// the compute shader for blurring, so we must unbind it from the OM stage before we
+	// can use it as an input into the compute shader.
+	//
+	//{
+	//	renderTargets[0] = mRenderTargetView;
+	//	md3dDeviceContext->OMSetRenderTargets(1, renderTargets, mDepthStencilView);
 
-		SetShaderParameters(mLandWorld, mLandMat, mGrassTexTransform);
-		md3dDeviceContext->PSSetShaderResources(1, 1, &mGrassMapSRV);
-		md3dDeviceContext->DrawIndexed(mLandIndexCount, 0, 0);
-	}
-	{
-		//
-		// Draw the waves.
-		//
-		md3dDeviceContext->IASetVertexBuffers(0, 1, &mWavesVB, &stride, &offset);
-		md3dDeviceContext->IASetIndexBuffer(mWavesIB, DXGI_FORMAT_R32_UINT, 0);
-		SetShaderParameters(mWavesWorld, mWavesMat, mWaterTexTransform);
-		md3dDeviceContext->PSSetShaderResources(1, 1, &mWavesMapSRV);
-		md3dDeviceContext->OMSetBlendState(RenderStates::TransparentBS, blendFactor, 0xffffffff);
-		md3dDeviceContext->DrawIndexed(3 * mWaves.TriangleCount(), 0, 0);
-		// Restore default blend state
-		md3dDeviceContext->OMSetBlendState(0, blendFactor, 0xffffffff);
-	}
-		
+	//	mBlur.SetGaussianWeights(4.0f);
+	//	mBlur.BlurInPlace(md3dDeviceContext, mOffscreenSRV, mOffscreenUAV, 0);
+
+	//	//
+	//	// Draw fullscreen quad with texture of blurred scene on it.
+	//	//
+
+	//	md3dDeviceContext->ClearRenderTargetView(mRenderTargetView, reinterpret_cast<const float*>(&Colors::Silver));
+	//	md3dDeviceContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+	//	DrawScreenQuad();
+
+	//}
+	//draw Font
+	md3dDeviceContext->GSSetShader(0, NULL, 0);   //reset the pipeline
+	Font2D::FontPrint::DrawFont(md3dDeviceContext, m_orthoMatrix);
+
 	HR(mSwapChain->Present(0, 0));
 }
 
@@ -483,7 +446,183 @@ void BlendApp::BuildCrateGeometryBuffers()
 	iinitData.pSysMem = &box.Indices[0];
 	HR(md3dDevice->CreateBuffer(&ibd, &iinitData, &mBoxIB));
 }
-void BlendApp::SetShaderParameters(const XMFLOAT4X4 worldMatrix, const Material material, const XMFLOAT4X4 texTransform)
+void BlendApp::BuildScreenQuadGeometryBuffers()
+{
+	GeometryGenerator::MeshData quad;
+	GeometryGenerator geoGen;
+	geoGen.CreateFullscreenQuad(quad);
+
+	//
+	// Extract the vertex elements we are interested in and pack the
+	// vertices of all the meshes into one vertex buffer.
+	//
+
+	std::vector<Vertex> vertices(quad.Vertices.size());
+
+	for (UINT i = 0; i < quad.Vertices.size(); ++i)
+	{
+		vertices[i].Pos = quad.Vertices[i].Position;
+		vertices[i].Normal = quad.Vertices[i].Normal;
+		vertices[i].Tex = quad.Vertices[i].TexC;
+	}
+
+	D3D11_BUFFER_DESC vbd;
+	vbd.Usage = D3D11_USAGE_IMMUTABLE;
+	vbd.ByteWidth = sizeof(Vertex) * quad.Vertices.size();
+	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vbd.CPUAccessFlags = 0;
+	vbd.MiscFlags = 0;
+	D3D11_SUBRESOURCE_DATA vinitData;
+	vinitData.pSysMem = &vertices[0];
+	HR(md3dDevice->CreateBuffer(&vbd, &vinitData, &mScreenQuadVB));
+
+	//
+	// Pack the indices of all the meshes into one index buffer.
+	//
+
+	D3D11_BUFFER_DESC ibd;
+	ibd.Usage = D3D11_USAGE_IMMUTABLE;
+	ibd.ByteWidth = sizeof(UINT) * quad.Indices.size();
+	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ibd.CPUAccessFlags = 0;
+	ibd.MiscFlags = 0;
+	D3D11_SUBRESOURCE_DATA iinitData;
+	iinitData.pSysMem = &quad.Indices[0];
+	HR(md3dDevice->CreateBuffer(&ibd, &iinitData, &mScreenQuadIB));
+
+}
+/**
+	*@brief call this function everytime  the window is resized so that the render target is a quarter
+	* the client area dimensions.  So Release the previous views before we create new ones.
+*/
+void BlendApp::BuildOffscreenViews()
+{
+	ReleaseCOM(mOffscreenSRV);
+	ReleaseCOM(mOffscreenRTV);
+	ReleaseCOM(mOffscreenUAV);
+
+	D3D11_TEXTURE2D_DESC texDesc;
+
+	texDesc.Width = mClientWidth;
+	texDesc.Height = mClientHeight;
+	texDesc.MipLevels = 1;
+	texDesc.ArraySize = 1;
+	texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	texDesc.SampleDesc.Count = 1;
+	texDesc.SampleDesc.Quality = 0;
+	texDesc.Usage = D3D11_USAGE_DEFAULT;
+	texDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS;
+	texDesc.CPUAccessFlags = 0;
+	texDesc.MiscFlags = 0;
+
+	ID3D11Texture2D* offscreenTex = 0;
+	HR(md3dDevice->CreateTexture2D(&texDesc, 0, &offscreenTex));
+
+	// Null description means to create a view to all mipmap levels using 
+	// the format the texture was created with.
+	HR(md3dDevice->CreateShaderResourceView(offscreenTex, 0, &mOffscreenSRV));
+	HR(md3dDevice->CreateRenderTargetView(offscreenTex, 0, &mOffscreenRTV));
+	HR(md3dDevice->CreateUnorderedAccessView(offscreenTex, 0, &mOffscreenUAV));
+
+	// View saves a reference to the texture so we can release our reference.
+	ReleaseCOM(offscreenTex);
+}
+void BlendApp::DrawScreenQuad()
+{
+
+	UINT stride = sizeof(Vertex);
+	UINT offset = 0;
+
+	md3dDeviceContext->IASetVertexBuffers(0, 1, &mScreenQuadVB, &stride, &offset);
+	md3dDeviceContext->IASetIndexBuffer(mScreenQuadIB, DXGI_FORMAT_R32_UINT, 0);
+
+	XMFLOAT4X4 identity;
+	XMMATRIX I = XMMatrixIdentity();
+	XMStoreFloat4x4(&identity, I);
+	SetShaderParameters(identity,nullptr,identity);
+
+	ID3D11ShaderResourceView* blurOutput = mBlur.GetBlurredOutput();
+	md3dDeviceContext->CSSetShaderResources(0,1,&blurOutput);
+	md3dDeviceContext->DrawIndexed(6, 0, 0);
+
+}
+void BlendApp::DrawWrapper()
+{
+	md3dDeviceContext->IASetInputLayout(mInputLayout);
+	md3dDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	md3dDeviceContext->PSSetSamplers(0, 1, &mSampleState);
+	md3dDeviceContext->VSSetShader(mVertexShader, NULL, 0);
+	md3dDeviceContext->PSSetShader(mPixelShader, NULL, 0);
+
+	float blendFactor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+
+
+	// Set per frame constants.
+	SetLightParameters();
+	switch (mRenderOptions)
+	{
+	case RenderOptions::Lighting:
+		mLightCount = 3;
+		mFogEnable = 0;
+		break;
+	case RenderOptions::Textures:
+		mFogEnable = 0;
+		break;
+	case RenderOptions::TexturesAndFog:
+		mFogEnable = 1;
+		mLightCount = 3;
+		break;
+	}
+
+
+	UINT stride = sizeof(Vertex);
+	UINT offset = 0;
+	//
+	// Draw the box with alpha clipping.
+	// 
+	{
+		md3dDeviceContext->IASetVertexBuffers(0, 1, &mBoxVB, &stride, &offset);
+		md3dDeviceContext->IASetIndexBuffer(mBoxIB, DXGI_FORMAT_R32_UINT, 0);
+
+		SetShaderParameters(mBoxWorld, &mBoxMat, mBoxTexTransform);
+		md3dDeviceContext->PSSetShaderResources(1, 1, &mBoxMapSRV);
+		md3dDeviceContext->RSSetState(RenderStates::NoCullRS);
+		md3dDeviceContext->DrawIndexed(36, 0, 0);
+		// Restore default render state.
+		//md3dDeviceContext->RSSetState(0);
+	}
+
+
+	//
+	// Draw the hills and water with texture and fog (no alpha clipping needed).
+	//
+	{
+		//
+		// Draw the hills.
+		//
+		md3dDeviceContext->IASetVertexBuffers(0, 1, &mLandVB, &stride, &offset);
+		md3dDeviceContext->IASetIndexBuffer(mLandIB, DXGI_FORMAT_R32_UINT, 0);
+
+		SetShaderParameters(mLandWorld, &mLandMat, mGrassTexTransform);
+		md3dDeviceContext->PSSetShaderResources(1, 1, &mGrassMapSRV);
+		md3dDeviceContext->DrawIndexed(mLandIndexCount, 0, 0);
+	}
+	{
+		//
+		// Draw the waves.
+		//
+		md3dDeviceContext->IASetVertexBuffers(0, 1, &mWavesVB, &stride, &offset);
+		md3dDeviceContext->IASetIndexBuffer(mWavesIB, DXGI_FORMAT_R32_UINT, 0);
+		SetShaderParameters(mWavesWorld, &mWavesMat, mWaterTexTransform);
+		md3dDeviceContext->PSSetShaderResources(1, 1, &mWavesMapSRV);
+		md3dDeviceContext->OMSetBlendState(RenderStates::TransparentBS, blendFactor, 0xffffffff);
+		md3dDeviceContext->DrawIndexed(3 * mWaves.TriangleCount(), 0, 0);
+		// Restore default blend state
+		md3dDeviceContext->OMSetBlendState(0, blendFactor, 0xffffffff);
+	}
+}
+void BlendApp::SetShaderParameters(const XMFLOAT4X4 worldMatrix, const Material* material, const XMFLOAT4X4 texTransform)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	MatrixBufferType* dataPtr;
@@ -510,7 +649,10 @@ void BlendApp::SetShaderParameters(const XMFLOAT4X4 worldMatrix, const Material 
 	EyeMaterialType* dataPtr2;
 	HR(md3dDeviceContext->Map(mEyeMaterialBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource));
 	dataPtr2 = (EyeMaterialType*)mappedResource.pData;
-	dataPtr2->gMaterial = material;
+	if (material != nullptr)
+	{
+		dataPtr2->gMaterial = *material;
+	}
 	dataPtr2->gEyePosW = mEyePosW;
 	dataPtr2->gFogColor = (const float*)&Colors::Silver;
 	dataPtr2->gFogStart = 15.0f;
@@ -652,3 +794,44 @@ void BlendApp::BuildSampler()
 	// Create the texture sampler state.
 	HR(md3dDevice->CreateSamplerState(&samplerDesc, &mSampleState));
 }
+
+void BlendApp::UpdateInput(float dt)
+{
+	//get mouse state
+	DirectX::Mouse::State mouseState = m_pMouse->GetState();
+	DirectX::Mouse::State lastMouseState = m_MouseTracker.GetLastState();
+	//get keyboard state
+	DirectX::Keyboard::State keyState = m_pKeyboard->GetState();
+	DirectX::Keyboard::State lastKeyState = m_KeyboardTracker.GetLastState();
+
+	//update mousestate
+	m_MouseTracker.Update(mouseState);
+	m_KeyboardTracker.Update(keyState);
+	m_KeyboardTracker.Update(keyState);
+	if (mouseState.leftButton == true && m_MouseTracker.leftButton == m_MouseTracker.HELD)
+	{
+		mTheta -= (mouseState.x - lastMouseState.x) * 0.01f;
+		mPhi -= (mouseState.y - lastMouseState.y) * 0.01f;
+	}
+	if (keyState.IsKeyDown(DirectX::Keyboard::W))
+		mPhi += dt * 2;
+	if (keyState.IsKeyDown(DirectX::Keyboard::S))
+		mPhi -= dt * 2;
+	if (keyState.IsKeyDown(DirectX::Keyboard::A))
+		mTheta += dt * 2;
+	if (keyState.IsKeyDown(DirectX::Keyboard::D))
+		mTheta -= dt * 2;
+
+	//
+// Switch the render mode based in key input.
+//
+	if (keyState.IsKeyDown(DirectX::Keyboard::L))
+		mRenderOptions = RenderOptions::Lighting;
+
+	if (keyState.IsKeyDown(DirectX::Keyboard::T))
+		mRenderOptions = RenderOptions::Textures;
+
+	if (keyState.IsKeyDown(DirectX::Keyboard::F))
+		mRenderOptions = RenderOptions::TexturesAndFog;
+}
+

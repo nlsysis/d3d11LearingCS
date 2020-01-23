@@ -1,6 +1,6 @@
 #include "LightHelper.hlsl"
 
-cbuffer cbPerObject
+cbuffer cbPerObject : register(b0)
 {
     matrix gWorldViewProj;
     matrix gWorldInvTranspose;

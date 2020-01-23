@@ -31,6 +31,9 @@
     <Filter Include="shader\geometry">
       <UniqueIdentifier>{015ca3e7-489f-4487-bc6a-a60cdd8d994e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="shader\cs">
+      <UniqueIdentifier>{c13e0b85-eed0-418c-9e26-e1ec3a3c9e8b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="InitDirectx3D.cpp">
@@ -116,6 +119,9 @@
     </ClCompile>
     <ClCompile Include="common\font\Font2D.cpp">
       <Filter>common\Font</Filter>
+    </ClCompile>
+    <ClCompile Include="BlurFilter.cpp">
+      <Filter>main\Blending</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -203,6 +209,9 @@
     <ClInclude Include="common\font\Font2D.h">
       <Filter>common\Font</Filter>
     </ClInclude>
+    <ClInclude Include="BlurFilter.h">
+      <Filter>main\Blending</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="shader\color.hlsl">
@@ -226,5 +235,13 @@
     <CustomBuild Include="shader\Geometry.hlsl">
       <Filter>shader\geometry</Filter>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="shader\TreeBilloard.hlsl">
+      <Filter>shader\geometry</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\Blur.hlsl">
+      <Filter>shader\cs</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

@@ -6,6 +6,7 @@
 #include "LightHelper.h"
 #include "Waves.h"
 #include "RenderStates.h"
+#include "BlurFilter.h"
 
 enum RenderOptions
 {
@@ -61,13 +62,17 @@ private:
 	void BuildLandGeometryBuffers();
 	void BuildWaveGeometryBuffers();
 	void BuildCrateGeometryBuffers();
+	void BuildScreenQuadGeometryBuffers();
+	void BuildOffscreenViews();
+	void DrawScreenQuad();
+	void DrawWrapper();
 
-	void SetShaderParameters(const XMFLOAT4X4 worldMatrix, const Material material, const XMFLOAT4X4 texTransform);
+	void SetShaderParameters(const XMFLOAT4X4 worldMatrix, const Material* material, const XMFLOAT4X4 texTransform);
 	void BuildFX();
 	void BuildConstantBuffer();
 	void SetLightParameters();
 	void BuildSampler();
-
+	void UpdateInput(float dt);
 private:
 	ID3D11Buffer* mLandVB;
 	ID3D11Buffer* mLandIB;
@@ -81,6 +86,15 @@ private:
 	ID3D11ShaderResourceView* mGrassMapSRV;
 	ID3D11ShaderResourceView* mWavesMapSRV;
 	ID3D11ShaderResourceView* mBoxMapSRV;
+
+	ID3D11Buffer* mScreenQuadVB;
+	ID3D11Buffer* mScreenQuadIB;
+
+	ID3D11ShaderResourceView* mOffscreenSRV;
+	ID3D11UnorderedAccessView* mOffscreenUAV;
+	ID3D11RenderTargetView* mOffscreenRTV;
+
+	BlurFilter mBlur;
 
 	ID3D11Buffer* mMatrixBuffer;
 	ID3D11Buffer* mEyeMaterialBuffer;

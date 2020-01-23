@@ -32,7 +32,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 #endif
 
 	//InitDirect3DApp theApp(hInstance);
-	GeometryApp theApp(hInstance);
+	BlendApp theApp(hInstance);
 
 	if (!theApp.Init())
 		return 0;

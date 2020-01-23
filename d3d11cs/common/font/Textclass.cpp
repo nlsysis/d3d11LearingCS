@@ -54,7 +54,7 @@ bool TextClass::Initialize(ID3D11Device *device,HWND hwnd,
 	}
 
 	//initialze the first sentence
-	result = InitializeSentence(&m_sentence1,16,device);
+	result = InitializeSentence(&m_sentence1,50,device);
 	if (!result)
 	{
 		return false;
