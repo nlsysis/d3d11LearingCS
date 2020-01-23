@@ -212,23 +212,23 @@ void BlendApp::DrawScene()
 	// the compute shader for blurring, so we must unbind it from the OM stage before we
 	// can use it as an input into the compute shader.
 	//
-	//{
-	//	renderTargets[0] = mRenderTargetView;
-	//	md3dDeviceContext->OMSetRenderTargets(1, renderTargets, mDepthStencilView);
+	{
+		renderTargets[0] = mRenderTargetView;
+		md3dDeviceContext->OMSetRenderTargets(1, renderTargets, mDepthStencilView);
 
-	//	mBlur.SetGaussianWeights(4.0f);
-	//	mBlur.BlurInPlace(md3dDeviceContext, mOffscreenSRV, mOffscreenUAV, 0);
+		mBlur.SetGaussianWeights(4.0f);
+		mBlur.BlurInPlace(md3dDeviceContext, mOffscreenSRV, mOffscreenUAV, 4);
 
-	//	//
-	//	// Draw fullscreen quad with texture of blurred scene on it.
-	//	//
+		//
+		// Draw fullscreen quad with texture of blurred scene on it.
+		//
 
-	//	md3dDeviceContext->ClearRenderTargetView(mRenderTargetView, reinterpret_cast<const float*>(&Colors::Silver));
-	//	md3dDeviceContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+		md3dDeviceContext->ClearRenderTargetView(mRenderTargetView, reinterpret_cast<const float*>(&Colors::Silver));
+		md3dDeviceContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-	//	DrawScreenQuad();
+		DrawScreenQuad();
 
-	//}
+	}
 	//draw Font
 	md3dDeviceContext->GSSetShader(0, NULL, 0);   //reset the pipeline
 	Font2D::FontPrint::DrawFont(md3dDeviceContext, m_orthoMatrix);
