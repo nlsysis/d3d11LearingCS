@@ -34,6 +34,12 @@
     <Filter Include="shader\cs">
       <UniqueIdentifier>{c13e0b85-eed0-418c-9e26-e1ec3a3c9e8b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="main\FluidCS2D">
+      <UniqueIdentifier>{60fa2f9f-f326-4336-b0e5-2a5985321fd4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shader\fluid2d">
+      <UniqueIdentifier>{523757ee-0c26-4f1e-8eab-93e277e50bb0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="InitDirectx3D.cpp">
@@ -122,6 +128,9 @@
     </ClCompile>
     <ClCompile Include="BlurFilter.cpp">
       <Filter>main\Blending</Filter>
+    </ClCompile>
+    <ClCompile Include="Fluid2D.cpp">
+      <Filter>main\FluidCS2D</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -212,6 +221,9 @@
     <ClInclude Include="BlurFilter.h">
       <Filter>main\Blending</Filter>
     </ClInclude>
+    <ClInclude Include="Fluid2D.h">
+      <Filter>main\FluidCS2D</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="shader\color.hlsl">
@@ -235,11 +247,20 @@
     <CustomBuild Include="shader\Geometry.hlsl">
       <Filter>shader\geometry</Filter>
     </CustomBuild>
-    <CustomBuild Include="shader\Blur.hlsl">
-      <Filter>shader</Filter>
-    </CustomBuild>
     <CustomBuild Include="shader\TreeBilloard.hlsl">
       <Filter>shader\geometry</Filter>
+    </CustomBuild>
+    <CustomBuild Include="shader\Blur.hlsl">
+      <Filter>shader\cs</Filter>
+    </CustomBuild>
+    <CustomBuild Include="shader\ComputeShaderSort11.hlsl">
+      <Filter>shader\fluid2d</Filter>
+    </CustomBuild>
+    <CustomBuild Include="shader\FluidCS11.hlsl">
+      <Filter>shader\fluid2d</Filter>
+    </CustomBuild>
+    <CustomBuild Include="shader\FluidRender.hlsl">
+      <Filter>shader\fluid2d</Filter>
     </CustomBuild>
   </ItemGroup>
 </Project>

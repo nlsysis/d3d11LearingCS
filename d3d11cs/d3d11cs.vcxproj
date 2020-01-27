@@ -149,6 +149,7 @@
     <ClCompile Include="common\Keyboard.cpp" />
     <ClCompile Include="common\Mouse.cpp" />
     <ClCompile Include="CreateApp.cpp" />
+    <ClCompile Include="Fluid2D.cpp" />
     <ClCompile Include="GeometryApp.cpp" />
     <ClCompile Include="HillsApp.cpp" />
     <ClCompile Include="InitDirectx3D.cpp" />
@@ -180,6 +181,7 @@
     <ClInclude Include="common\Keyboard.h" />
     <ClInclude Include="common\Mouse.h" />
     <ClInclude Include="CreateApp.h" />
+    <ClInclude Include="Fluid2D.h" />
     <ClInclude Include="GeometryApp.h" />
     <ClInclude Include="HillsApp.h" />
     <ClInclude Include="LightingApp.h" />
@@ -241,6 +243,17 @@
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="shader\Blur.hlsl">
+      <FileType>Document</FileType>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="shader\ComputeShaderSort11.hlsl">
+      <FileType>Document</FileType>
+    </CustomBuild>
+    <CustomBuild Include="shader\FluidCS11.hlsl">
+      <FileType>Document</FileType>
+    </CustomBuild>
+    <CustomBuild Include="shader\FluidRender.hlsl">
       <FileType>Document</FileType>
     </CustomBuild>
   </ItemGroup>

@@ -45,6 +45,16 @@
 	#endif
 #endif 
 
+#ifndef SAFE_DELETE
+#define SAFE_DELETE(p)       { if (p) { delete (p);     (p)=NULL; } }
+#endif
+#ifndef SAFE_DELETE_ARRAY
+#define SAFE_DELETE_ARRAY(p) { if (p) { delete[] (p);   (p)=NULL; } }
+#endif
+#ifndef SAFE_RELEASE
+#define SAFE_RELEASE(p)      { if (p) { (p)->Release(); (p)=NULL; } }
+#endif
+
 //---------------------------------------------------------------------------------------
 // Convenience macro for releasing COM objects.
 //---------------------------------------------------------------------------------------
@@ -57,6 +67,32 @@
 
 #define SafeDelete(x) { delete x; x = 0; }
 
+#ifndef GRAPHICS_DEBUGGER_OBJECT_NAME
+#define GRAPHICS_DEBUGGER_OBJECT_NAME (1)
+#endif
+
+template<UINT TNameLength>
+inline void D3D11SetDebugObjectName(_In_ ID3D11DeviceChild* resource, _In_ const char(&name)[TNameLength])
+{
+#if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
+	resource->SetPrivateData(WKPDID_D3DDebugObjectName, TNameLength - 1, name);
+#else
+	UNREFERENCED_PARAMETER(resource);
+	UNREFERENCED_PARAMETER(name);
+#endif
+}
+
+
+template<UINT TNameLength>
+inline void DXGISetDebugObjectName(_In_ IDXGIObject* resource, _In_ const char(&name)[TNameLength])
+{
+#if (defined(DEBUG) || defined(_DEBUG)) && (GRAPHICS_DEBUGGER_OBJECT_NAME)
+	resource->SetPrivateData(WKPDID_D3DDebugObjectName, TNameLength - 1, name);
+#else
+	UNREFERENCED_PARAMETER(resource);
+	UNREFERENCED_PARAMETER(name);
+#endif
+}
 
 class d3dHelper
 {
