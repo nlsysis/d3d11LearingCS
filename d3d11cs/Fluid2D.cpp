@@ -14,7 +14,7 @@ const UINT BITONIC_BLOCK_SIZE = 512;
 const UINT TRANSPOSE_BLOCK_SIZE = 16;
 
 const UINT NUM_PARTICLES_8K = 8 * 1024;
-const UINT NUM_PARTICLES_16K =1024;
+const UINT NUM_PARTICLES_16K =16 * 1024;
 UINT g_iNumParticles = NUM_PARTICLES_16K;   //default use particle number
 
 //Particle Properties
@@ -58,7 +58,7 @@ enum eSimulationMode
 	SIM_MODE_GRID
 };
 
-eSimulationMode g_eSimMode = SIM_MODE_SIMPLE;
+eSimulationMode g_eSimMode = SIM_MODE_GRID;
 
 
 
@@ -77,8 +77,7 @@ _DECLSPEC_ALIGN_16_ struct CBSimulationConstants
 	float fLapViscosityCoef;
 	float fWallStiffness;
 
-	XMFLOAT2 vGravity;
-	XMFLOAT2 padding;
+	XMFLOAT2A vGravity;
 	XMFLOAT4 vGridDim;
 	
 	XMFLOAT3A vPlanes[4];
