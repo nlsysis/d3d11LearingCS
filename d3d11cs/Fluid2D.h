@@ -50,6 +50,65 @@ private:
 	void SimulateFluid_Grid(ID3D11DeviceContext* pd3dImmediateContext);
 	void SimulateFluid(ID3D11DeviceContext* pd3dImmediateContext, float fElapsedTime);
 	void RenderFluid(ID3D11DeviceContext* pd3dImmediateContext, float fElapsedTime);
-//public:
+private:
+	//Direct3D11 Grobal variables
+	ID3D11ShaderResourceView* const   g_pNullSRV = NULL;       //helper to clear SRVS
+	ID3D11UnorderedAccessView* const  g_pNullUAV = NULL;       //helper to clear UAVS
+	ID3D11Buffer*  const              g_pNullBuffer = NULL;    //helper to clear buffers
+	UINT                              g_iNullUINT = 0;         //helper to clear buffers
+
+	//Shaders
+	ID3D11VertexShader*               g_pParticlesVS = NULL;
+	ID3D11GeometryShader*             g_pParticlesGS = NULL;
+	ID3D11PixelShader*                g_pParticlesPS = NULL;
+
+	ID3D11ComputeShader*              g_pBuildGridCS = NULL;
+	ID3D11ComputeShader*              g_pClearGridIndicesCS = NULL;
+	ID3D11ComputeShader*              g_pBuildGridIndicesCS = NULL;
+	ID3D11ComputeShader*              g_pRearrangeParticlesCS = NULL;
+	ID3D11ComputeShader*              g_pDensity_SimpleCS = NULL;
+	ID3D11ComputeShader*              g_pForce_SimpleCS = NULL;
+	ID3D11ComputeShader*              g_pDensity_SharedCS = NULL;
+	ID3D11ComputeShader*              g_pForce_SharedCS = NULL;
+	ID3D11ComputeShader*              g_pDensity_GridCS = NULL;
+	ID3D11ComputeShader*              g_pForce_GridCS = NULL;
+	ID3D11ComputeShader*              g_pIntegrateCS = NULL;
+
+	ID3D11ComputeShader*              g_pSortBitonic = NULL;
+	ID3D11ComputeShader*              g_pSortTranspose = NULL;
+
+	//structured buffers
+	ID3D11Buffer*                    g_pParticles = NULL;
+	ID3D11ShaderResourceView*        g_pParticlesSRV = NULL;
+	ID3D11UnorderedAccessView*       g_pParticlesUAV = NULL;
+
+	ID3D11Buffer*                       g_pSortedParticles = NULL;
+	ID3D11ShaderResourceView*           g_pSortedParticlesSRV = NULL;
+	ID3D11UnorderedAccessView*          g_pSortedParticlesUAV = NULL;
+
+	ID3D11Buffer*                       g_pParticleDensity = NULL;
+	ID3D11ShaderResourceView*           g_pParticleDensitySRV = NULL;
+	ID3D11UnorderedAccessView*          g_pParticleDensityUAV = NULL;
+
+	ID3D11Buffer*                       g_pParticleForces = NULL;
+	ID3D11ShaderResourceView*           g_pParticleForcesSRV = NULL;
+	ID3D11UnorderedAccessView*          g_pParticleForcesUAV = NULL;
+
+	ID3D11Buffer*                       g_pGrid = NULL;
+	ID3D11ShaderResourceView*           g_pGridSRV = NULL;
+	ID3D11UnorderedAccessView*          g_pGridUAV = NULL;
+
+	ID3D11Buffer*                       g_pGridPingPong = NULL;
+	ID3D11ShaderResourceView*           g_pGridPingPongSRV = NULL;
+	ID3D11UnorderedAccessView*          g_pGridPingPongUAV = NULL;
+
+	ID3D11Buffer*                       g_pGridIndices = NULL;
+	ID3D11ShaderResourceView*           g_pGridIndicesSRV = NULL;
+	ID3D11UnorderedAccessView*          g_pGridIndicesUAV = NULL;
+
+	//Constant Buffers
+	ID3D11Buffer*			g_pcbSimulationConstants = NULL;
+	ID3D11Buffer*			g_pcbRenderConstants = NULL;
+	ID3D11Buffer*			g_pSortCB = NULL;
 
 };

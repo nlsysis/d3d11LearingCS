@@ -14,7 +14,7 @@ const UINT BITONIC_BLOCK_SIZE = 512;
 const UINT TRANSPOSE_BLOCK_SIZE = 16;
 
 const UINT NUM_PARTICLES_8K = 8 * 1024;
-const UINT NUM_PARTICLES_16K = 1024;
+const UINT NUM_PARTICLES_16K =1024;
 UINT g_iNumParticles = NUM_PARTICLES_16K;   //default use particle number
 
 //Particle Properties
@@ -28,11 +28,11 @@ float g_fMaxAllowableTimeStep = 0.005f;        //
 float g_fParticleRenderSize = 0.003f;          //
 
 //Gravity Directions
-const XMFLOAT2 GRAVITY_DOWN(0, -0.5f);
-const XMFLOAT2 GRAVITY_UP(0, 0.5f);
-const XMFLOAT2 GRAVITY_LEFT(-0.5f, 0);
-const XMFLOAT2 GRAVITY_RIGHT(0.5f, 0);
-XMFLOAT2 g_vGravity = GRAVITY_DOWN;  //default gracity direction
+const XMFLOAT2A GRAVITY_DOWN(0, -0.5f);
+const XMFLOAT2A GRAVITY_UP(0, 0.5f);
+const XMFLOAT2A GRAVITY_LEFT(-0.5f, 0);
+const XMFLOAT2A GRAVITY_RIGHT(0.5f, 0);
+XMFLOAT2A g_vGravity = GRAVITY_DOWN;  //default gracity direction
 
 //Mao Size
 //These values should not be larger than 256 * fSmothlen
@@ -58,62 +58,9 @@ enum eSimulationMode
 	SIM_MODE_GRID
 };
 
-eSimulationMode g_eSimMode = SIM_MODE_GRID;
+eSimulationMode g_eSimMode = SIM_MODE_SIMPLE;
 
-//Direct3D11 Grobal variables
-ID3D11ShaderResourceView* const   g_pNullSRV = NULL;       //helper to clear SRVS
-ID3D11UnorderedAccessView* const  g_pNullUAV = NULL;       //helper to clear UAVS
-ID3D11Buffer*  const              g_pNullBuffer = NULL;    //helper to clear buffers
-UINT                              g_iNullUINT = 0;         //helper to clear buffers
 
-//Shaders
-ID3D11VertexShader*               g_pParticlesVS = NULL;
-ID3D11GeometryShader*             g_pParticlesGS = NULL;
-ID3D11PixelShader*                g_pParticlesPS = NULL;
-
-ID3D11ComputeShader*              g_pBuildGridCS = NULL;
-ID3D11ComputeShader*              g_pClearGridIndicesCS = NULL;
-ID3D11ComputeShader*              g_pBuildGridIndicesCS = NULL;
-ID3D11ComputeShader*              g_pRearrangeParticlesCS = NULL;
-ID3D11ComputeShader*              g_pDensity_SimpleCS = NULL;
-ID3D11ComputeShader*              g_pForce_SimpleCS = NULL;
-ID3D11ComputeShader*              g_pDensity_SharedCS = NULL;
-ID3D11ComputeShader*              g_pForce_SharedCS = NULL;
-ID3D11ComputeShader*              g_pDensity_GridCS = NULL;
-ID3D11ComputeShader*              g_pForce_GridCS = NULL;
-ID3D11ComputeShader*              g_pIntegrateCS = NULL;
-
-ID3D11ComputeShader*              g_pSortBitonic = NULL;
-ID3D11ComputeShader*              g_pSortTranspose = NULL;
-
-//structured buffers
-ID3D11Buffer*                    g_pParticles = NULL;
-ID3D11ShaderResourceView*        g_pParticlesSRV = NULL;
-ID3D11UnorderedAccessView*       g_pParticlesUAV = NULL;
-
-ID3D11Buffer*                       g_pSortedParticles = NULL;
-ID3D11ShaderResourceView*           g_pSortedParticlesSRV = NULL;
-ID3D11UnorderedAccessView*          g_pSortedParticlesUAV = NULL;
-
-ID3D11Buffer*                       g_pParticleDensity = NULL;
-ID3D11ShaderResourceView*           g_pParticleDensitySRV = NULL;
-ID3D11UnorderedAccessView*          g_pParticleDensityUAV = NULL;
-
-ID3D11Buffer*                       g_pParticleForces = NULL;
-ID3D11ShaderResourceView*           g_pParticleForcesSRV = NULL;
-ID3D11UnorderedAccessView*          g_pParticleForcesUAV = NULL;
-
-ID3D11Buffer*                       g_pGrid = NULL;
-ID3D11ShaderResourceView*           g_pGridSRV = NULL;
-ID3D11UnorderedAccessView*          g_pGridUAV = NULL;
-
-ID3D11Buffer*                       g_pGridPingPong = NULL;
-ID3D11ShaderResourceView*           g_pGridPingPongSRV = NULL;
-ID3D11UnorderedAccessView*          g_pGridPingPongUAV = NULL;
-
-ID3D11Buffer*                       g_pGridIndices = NULL;
-ID3D11ShaderResourceView*           g_pGridIndicesSRV = NULL;
-ID3D11UnorderedAccessView*          g_pGridIndicesUAV = NULL;
 
 //constant buffer layout
 #pragma warning(push)
@@ -153,10 +100,7 @@ _DECLSPEC_ALIGN_16_ struct SortCB
 
 #pragma warning(pop)
 
-//Constant Buffers
-ID3D11Buffer*			g_pcbSimulationConstants = NULL;
-ID3D11Buffer*			g_pcbRenderConstants = NULL;
-ID3D11Buffer*			g_pSortCB = NULL;
+
 
 // --------------------------------------------------------------------------------------
 // Helper for creating constant buffers
@@ -176,7 +120,21 @@ HRESULT CreateConstantBuffer(ID3D11Device* pd3dDevice, ID3D11Buffer** ppCB)
 
 	return hr;
 }
+template <class T>
+HRESULT CreateConstantBuffer2(ID3D11Device* pd3dDevice, ID3D11Buffer** ppCB)
+{
+	HRESULT hr = S_OK;
 
+	D3D11_BUFFER_DESC Desc;
+	Desc.Usage = D3D11_USAGE_DYNAMIC;
+	Desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	Desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	Desc.MiscFlags = 0;
+	Desc.ByteWidth = sizeof(T);
+	HR(pd3dDevice->CreateBuffer(&Desc, NULL, ppCB));
+
+	return hr;
+}
 
 //--------------------------------------------------------------------------------------
 // Helper for creating structured buffers with an SRV and UAV
@@ -224,11 +182,66 @@ Fluid2D::Fluid2D(HINSTANCE hInstance)
 {
 	mMainWndCaption = L"Fluid Demo";
 	mEnable4xMsaa = false;
+	g_iNullUINT = 0;         //helper to clear buffers
+
+	//Shaders
+	g_pParticlesVS = NULL;
+	g_pParticlesGS = NULL;
+	g_pParticlesPS = NULL;
+
+	g_pBuildGridCS = NULL;
+	g_pClearGridIndicesCS = NULL;
+	g_pBuildGridIndicesCS = NULL;
+	g_pRearrangeParticlesCS = NULL;
+	g_pDensity_SimpleCS = NULL;
+	g_pForce_SimpleCS = NULL;
+	g_pDensity_SharedCS = NULL;
+	g_pForce_SharedCS = NULL;
+	g_pDensity_GridCS = NULL;
+	g_pForce_GridCS = NULL;
+	g_pIntegrateCS = NULL;
+
+	g_pSortBitonic = NULL;
+	g_pSortTranspose = NULL;
+
+	//structured buffers
+	g_pParticles = NULL;
+	g_pParticlesSRV = NULL;
+	g_pParticlesUAV = NULL;
+
+	g_pSortedParticles = NULL;
+	g_pSortedParticlesSRV = NULL;
+	g_pSortedParticlesUAV = NULL;
+
+	g_pParticleDensity = NULL;
+	g_pParticleDensitySRV = NULL;
+	g_pParticleDensityUAV = NULL;
+
+	g_pParticleForces = NULL;
+	g_pParticleForcesSRV = NULL;
+	g_pParticleForcesUAV = NULL;
+
+	g_pGrid = NULL;
+	g_pGridSRV = NULL;
+	g_pGridUAV = NULL;
+
+	g_pGridPingPong = NULL;
+	g_pGridPingPongSRV = NULL;
+	g_pGridPingPongUAV = NULL;
+
+	g_pGridIndices = NULL;
+	g_pGridIndicesSRV = NULL;
+	g_pGridIndicesUAV = NULL;
+
+	//Constant Buffers
+	g_pcbSimulationConstants = NULL;
+	g_pcbRenderConstants = NULL;
+	g_pSortCB = NULL;
 }
 
 Fluid2D::~Fluid2D()
 {
-
+	//release constant shader
 	SAFE_RELEASE(g_pcbSimulationConstants);
 	SAFE_RELEASE(g_pcbRenderConstants);
 	SAFE_RELEASE(g_pSortCB);
@@ -358,6 +371,7 @@ HRESULT Fluid2D::CreateSimulationBuffers()
 		UINT x = i % iStartingWidth;
 		UINT y = i / iStartingWidth;
 		particles[i].vPosition = XMFLOAT2(g_fInitialParticleSpacing * (FLOAT)x, g_fInitialParticleSpacing * (FLOAT)y);
+		particles[i].vVelocity = XMFLOAT2(0.0f, 0.0f);
 	}
 
 	// Create Structured Buffers
@@ -412,12 +426,12 @@ void Fluid2D::BuildShader()
 	D3D11SetDebugObjectName(g_pParticlesVS, "ParticlesVS");
 	SAFE_RELEASE(pBlob);
 
-	SafeCompileShaderFromFile(L".\\shader\\FluidRender.hlsl", "ParticleGS", "gs_4_0", &pBlob);
+	SafeCompileShaderFromFile(L".\\shader\\FluidRender.hlsl", "ParticleGS", "gs_5_0", &pBlob);
 	HR(md3dDevice->CreateGeometryShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), NULL, &g_pParticlesGS));
 	D3D11SetDebugObjectName(g_pParticlesGS, "ParticlesGS");
 	SAFE_RELEASE(pBlob);
 
-	SafeCompileShaderFromFile(L".\\shader\\FluidRender.hlsl", "ParticlePS", "ps_4_0", &pBlob);
+	SafeCompileShaderFromFile(L".\\shader\\FluidRender.hlsl", "ParticlePS", "ps_5_0", &pBlob);
 	HR(md3dDevice->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), NULL, &g_pParticlesPS));
 	D3D11SetDebugObjectName(g_pParticlesPS, "ParticlesPS");
 	SAFE_RELEASE(pBlob);
@@ -743,8 +757,8 @@ void Fluid2D::SimulateFluid(ID3D11DeviceContext* pd3dImmediateContext, float fEl
 	// That way we only need to search the 8 adjacent cells + current cell
 	pData.vGridDim.x = 1.0f / g_fSmoothlen;
 	pData.vGridDim.y = 1.0f / g_fSmoothlen;
-	pData.vGridDim.z = 0;
-	pData.vGridDim.w = 0;
+	pData.vGridDim.z = 0.0f;
+	pData.vGridDim.w = 0.0f;
 
 	// Collision information for the map
 	pData.fWallStiffness = g_fWallStiffness;
