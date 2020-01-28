@@ -7,7 +7,7 @@
 //--------------------------------------------------------------------------------------
 cbuffer CB : register(b0)
 {
-    unsigned int g_iLevel;
+    unsigned int g_iLevel;      //2^sort Times
     unsigned int g_iLevelMask;
     unsigned int g_iWidth;
     unsigned int g_iHeight;
@@ -35,6 +35,14 @@ void BitonicSort(uint3 Gid : SV_GroupID,
     // Sort the shared data
     for (unsigned int j = g_iLevel >> 1; j > 0; j >>= 1)
     {
+       //same as follow
+       // uint smallerIndex = GI & ~j;
+       // uint largerIndex = GI | j;
+       // bool isDescending = (bool) (g_DescendMask & DTid.x);
+       // bool isSmallerIndex = (GI == smallerIndex);
+       // uint result = ((shared_data[smallerIndex] <= shared_data[largerIndex]) == (isDescending == isSmallerIndex)) ?
+       //shared_data[largerIndex] : shared_data[smallerIndex];
+
         unsigned int result = ((shared_data[GI & ~j] <= shared_data[GI | j]) == (bool) (g_iLevelMask & DTid.x)) ? shared_data[GI ^ j] : shared_data[GI];
         GroupMemoryBarrierWithGroupSync();
         shared_data[GI] = result;

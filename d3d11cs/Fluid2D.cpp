@@ -754,6 +754,16 @@ void Fluid2D::SimulateFluid(ID3D11DeviceContext* pd3dImmediateContext, float fEl
 
 	// Cells are spaced the size of the smoothing length search radius
 	// That way we only need to search the 8 adjacent cells + current cell
+	//-------------------
+	//|     |     |     |    
+	//|  c   |     |     |       
+	//-------------------
+	//|     |     |     | 
+	//|     |     |     |       
+	//-------------------
+	//|     |     |     | 
+	//|     |     |     |       
+	//-------------------
 	pData.vGridDim.x = 1.0f / g_fSmoothlen;
 	pData.vGridDim.y = 1.0f / g_fSmoothlen;
 	pData.vGridDim.z = 0.0f;
