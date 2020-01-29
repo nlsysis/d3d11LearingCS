@@ -1,12 +1,6 @@
 #include "PointBuffer.h"
 #include "GridContainer.h"
 
-void XMFloat3Div(XMFLOAT3& in_flo3, XMFLOAT3 in_data)
-{
-	in_flo3.x /= in_data.x;
-	in_flo3.y /= in_data.y;
-	in_flo3.z /= in_data.z;
-}
 
 void GridContainer::init(const XMFLOAT3 box_min, const XMFLOAT3 box_max, float sim_scale, float cell_size, float border)
 {
@@ -16,7 +10,7 @@ void GridContainer::init(const XMFLOAT3 box_min, const XMFLOAT3 box_max, float s
 	float world_cellsize = cell_size / sim_scale;
 
 	m_GridMin = box_min;	subtractF3(m_GridMin ,border);
-	m_GridMax = box_max;	addtractF3(m_GridMax, border);
+	m_GridMax = box_max;	addtractF3(m_GridMax , border);
 	m_GridSize = m_GridMax;
 	XMFloat3Sub(m_GridSize, m_GridMin);
 	m_GridCellsize = world_cellsize;
@@ -25,9 +19,9 @@ void GridContainer::init(const XMFLOAT3 box_min, const XMFLOAT3 box_max, float s
 	m_GridRes.y = (int)ceil(m_GridSize.y / world_cellsize);
 	m_GridRes.z = (int)ceil(m_GridSize.z / world_cellsize);
 	// Adjust grid size to multiple of cell size
-	m_GridSize.x = m_GridRes.x * cell_size / sim_scale;
-	m_GridSize.y = m_GridRes.y * cell_size / sim_scale;
-	m_GridSize.z = m_GridRes.z * cell_size / sim_scale;
+	m_GridSize.x = m_GridRes.x * world_cellsize;
+	m_GridSize.y = m_GridRes.y * world_cellsize;
+	m_GridSize.z = m_GridRes.z * world_cellsize;
 	// delta = translate from world space to cell #
 	m_GridDelta = m_GridRes;
 	XMFloat3Div(m_GridDelta, m_GridSize);
@@ -47,6 +41,7 @@ void GridContainer::insertParticles(PointBuffer * pointBuffer)
 	}
 
 	Point* p = pointBuffer->GetPoint(0);
+	Point* p2 = pointBuffer->GetPoint(903);
 	for (unsigned int n = 0; n < pointBuffer->size(); n++)
 	{
 		int gs = getGridCellIndex(p[n].vPos.x, p[n].vPos.y, p[n].vPos.z);
@@ -56,7 +51,11 @@ void GridContainer::insertParticles(PointBuffer * pointBuffer)
 			m_gridData[gs] = (int)n;
 		}
 		else p[n].next = -1;
+
+		int test = 0;
+
 	}
+	Point* p22 = pointBuffer->GetPoint(903);
 }
 
 void GridContainer::findCells(const XMFLOAT3 p, float radius, int * gridCell)
@@ -105,7 +104,6 @@ int GridContainer::getGridData(int gridIndex)
 {
 	if (gridIndex < 0 || gridIndex >= m_gridTotal)
 		return -1;
-
 	return m_gridData[gridIndex];
 }
 

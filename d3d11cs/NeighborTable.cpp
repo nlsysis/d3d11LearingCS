@@ -27,6 +27,7 @@ void NeighborTable::reset(unsigned short pointCounts)
 		m_pointExtraData = (PointExtraData*)malloc(sizeof(PointExtraData) * pointCounts);
 		m_pointCapcity = pointCounts;
 	}
+	
 	m_pointCounts = pointCounts;
 	memset(m_pointExtraData, 0, sizeof(PointExtraData) * m_pointCapcity);
 	m_dataBufOffset = 0;

@@ -10,10 +10,10 @@ public:
 	~PointBuffer();
 	void Reset(UINT capcity);
 	UINT size(void)  const { return mFluidCounts; }
-	Point* GetPoint(UINT index) const { return mFluidBuf;}
+	Point* GetPoint(UINT index) const { return mFluidBuf + index;}
 	Point* AddPointReuse(void);
-private:
 
+private:
 	Point*   mFluidBuf;
 	UINT   mFluidCounts;
 	UINT   mBufCapcity;

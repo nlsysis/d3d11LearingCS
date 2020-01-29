@@ -41,8 +41,10 @@ void FluidMain::Init(unsigned short maxPointCounts,
 
 	// Create the particles
 	float pointDistance = pow(m_fluidSystem.m_pointMass / m_fluidSystem.m_restDensity, 1.f / 3.f);  //the distance between point
-	_addFluidVolume(initFluidBox_min, initFluidBox_max, pointDistance / m_fluidSystem.m_unitScale);
 
+	
+	_addFluidVolume(initFluidBox_min, initFluidBox_max, pointDistance / m_fluidSystem.m_unitScale);
+	
 	// Setup grid Grid cell size (2r)	
 	m_gridContainer.init(wallBox_min, wallBox_max, m_fluidSystem.m_unitScale, m_fluidSystem.m_smoothRadius*2.f, 1.0);
 }
@@ -71,8 +73,9 @@ void FluidMain::_computePressure(void)
 
 		int gridCell[8];
 		m_gridContainer.findCells(pi->vPos, m_fluidSystem.m_smoothRadius / m_fluidSystem.m_unitScale, gridCell);
-
-		for (int cell = 0; cell < 8; cell++)
+		
+		bool loop = true;
+		for (int cell = 0; cell < 8 && loop; cell++)
 		{
 			if (gridCell[cell] == -1) continue;
 
@@ -93,18 +96,20 @@ void FluidMain::_computePressure(void)
 					float r2 = Len_sq(pi_pj);
 					if (h2 > r2)
 					{
-						float h2_r2 = h2 - r2;
-						sum += pow(h2_r2, 3.f);  //(h^2-r^2)^3
+						sum += pow(h2 - r2, 3.f);  //(h^2-r^2)^3
 
 						if (!m_neighborTable.point_add_neighbor(pndx, sqrt(r2)))
 						{
 							m_neighborTable.point_commit();
+							loop = false;
+							break;
 						}
 					}
 				}
 				pndx = pj->next;
 			}
 		}
+		m_neighborTable.point_commit();
 
 		//m_kernelPoly6 = 315.0f/(64.0f * 3.141592f * h^9);
 		pi->fDensity = m_kernelPoly6 * m_fluidSystem.m_pointMass * sum;
@@ -275,4 +280,6 @@ void FluidMain::_addFluidVolume(const XMFLOAT3 initFluidBox_min,
 			}
 		}
 	}
+	Point* pj = m_pointBuffer.GetPoint(903);
+
 }

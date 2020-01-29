@@ -75,3 +75,10 @@ float XMF3Dot(XMFLOAT3 in_flo3, XMFLOAT3 in_data)
 {
 	return in_flo3.x * in_data.x + in_flo3.y * in_data.y + in_flo3.z * in_data.z;
 }
+
+void XMFloat3Div(XMFLOAT3& in_flo3, XMFLOAT3 in_data)
+{
+	in_flo3.x /= in_data.x;
+	in_flo3.y /= in_data.y;
+	in_flo3.z /= in_data.z;
+}
