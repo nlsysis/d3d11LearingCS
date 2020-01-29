@@ -22,7 +22,7 @@ float g_fInitialParticleSpacing = 0.0045f;      //
 float g_fSmoothlen = 0.012f;                   //光滑核函数作用范围长度
 float g_fPressureStiffness = 200.0f;          //
 float g_fRestDensity = 1000.0f;                //p0静态流体密度
-float g_fParticleMass = 0.0002f;               //
+float g_fParticleMass = 0.0002f;               //the mass of particles
 float g_fViscosity = 0.1f;                     //
 float g_fMaxAllowableTimeStep = 0.005f;        //
 float g_fParticleRenderSize = 0.003f;          //
@@ -34,7 +34,7 @@ const XMFLOAT2A GRAVITY_LEFT(-0.5f, 0);
 const XMFLOAT2A GRAVITY_RIGHT(0.5f, 0);
 XMFLOAT2A g_vGravity = GRAVITY_DOWN;  //default gracity direction
 
-//Mao Size
+//Map Size
 //These values should not be larger than 256 * fSmothlen
 //Since the map must be divided up into fSmoothlen sized grid cells
 //And the grid cell is used as a 16-bit sort key,8-bits for x and y
@@ -756,7 +756,7 @@ void Fluid2D::SimulateFluid(ID3D11DeviceContext* pd3dImmediateContext, float fEl
 	// That way we only need to search the 8 adjacent cells + current cell
 	//-------------------
 	//|     |     |     |    
-	//|  c   |     |     |       
+	//|     |     |     |       
 	//-------------------
 	//|     |     |     | 
 	//|     |     |     |       

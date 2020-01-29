@@ -102,7 +102,7 @@ int D3DApp::Run()
 			{
 				CalculateFrameStats();
 				UpdateScene(mTimer.DeltaTime());
-				DrawScene(mTimer.DeltaTime());
+				DrawScene();
 			}
 			else
 			{

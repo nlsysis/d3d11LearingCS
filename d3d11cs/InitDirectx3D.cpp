@@ -11,6 +11,7 @@
 #include "BlendApp.h"
 #include "GeometryApp.h"
 #include "Fluid2D.h"
+#include "Fluid3DApp.h"
 
 class InitDirect3DApp : public D3DApp
 {
@@ -33,7 +34,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 #endif
 
 	//InitDirect3DApp theApp(hInstance);
-	Fluid2D theApp(hInstance);
+	Fluid3DApp theApp(hInstance);
 
 	if (!theApp.Init())
 		return 0;

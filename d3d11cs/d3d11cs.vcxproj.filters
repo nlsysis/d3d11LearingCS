@@ -40,6 +40,12 @@
     <Filter Include="shader\fluid2d">
       <UniqueIdentifier>{523757ee-0c26-4f1e-8eab-93e277e50bb0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="main\Fluid3D">
+      <UniqueIdentifier>{1cd2bfb6-a558-40a7-82ad-a6ca5be26a4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="main\Fluid3D\calculateInCPU">
+      <UniqueIdentifier>{2a90a1d6-cca2-4865-8328-f8b0ab5f3c7f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="InitDirectx3D.cpp">
@@ -132,6 +138,24 @@
     <ClCompile Include="Fluid2D.cpp">
       <Filter>main\FluidCS2D</Filter>
     </ClCompile>
+    <ClCompile Include="PointBuffer.cpp">
+      <Filter>main\Fluid3D\calculateInCPU</Filter>
+    </ClCompile>
+    <ClCompile Include="NeighborTable.cpp">
+      <Filter>main\Fluid3D\calculateInCPU</Filter>
+    </ClCompile>
+    <ClCompile Include="FluidMain.cpp">
+      <Filter>main\Fluid3D\calculateInCPU</Filter>
+    </ClCompile>
+    <ClCompile Include="GridContainer.cpp">
+      <Filter>main\Fluid3D\calculateInCPU</Filter>
+    </ClCompile>
+    <ClCompile Include="Fluid3DApp.cpp">
+      <Filter>main\Fluid3D\calculateInCPU</Filter>
+    </ClCompile>
+    <ClCompile Include="MathXMFLOAT.cpp">
+      <Filter>main\Fluid3D\calculateInCPU</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common\D3DApp.h">
@@ -223,6 +247,27 @@
     </ClInclude>
     <ClInclude Include="Fluid2D.h">
       <Filter>main\FluidCS2D</Filter>
+    </ClInclude>
+    <ClInclude Include="SphHelper.h">
+      <Filter>main\Fluid3D</Filter>
+    </ClInclude>
+    <ClInclude Include="PointBuffer.h">
+      <Filter>main\Fluid3D\calculateInCPU</Filter>
+    </ClInclude>
+    <ClInclude Include="NeighborTable.h">
+      <Filter>main\Fluid3D\calculateInCPU</Filter>
+    </ClInclude>
+    <ClInclude Include="FluidMain.h">
+      <Filter>main\Fluid3D\calculateInCPU</Filter>
+    </ClInclude>
+    <ClInclude Include="GridContainer.h">
+      <Filter>main\Fluid3D\calculateInCPU</Filter>
+    </ClInclude>
+    <ClInclude Include="Fluid3DApp.h">
+      <Filter>main\Fluid3D\calculateInCPU</Filter>
+    </ClInclude>
+    <ClInclude Include="MathXMFLOAT.h">
+      <Filter>main\Fluid3D\calculateInCPU</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

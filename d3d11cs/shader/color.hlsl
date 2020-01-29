@@ -6,7 +6,7 @@ cbuffer cbPerObject
 struct VertexIn
 {
     float3 PosL : POSITION;
-    float3 Normal : NORMAL;
+  //  float3 Normal : NORMAL;
     float4 Color : COLOR;
 };
 
